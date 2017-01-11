@@ -1,0 +1,66 @@
+<!DOCTYPE html><html lang="cmn-hans" manifest="/mono.appcache"><head><meta charset="utf-8"><title>OpenWrt Proxy | dgeibi's blog</title><meta name="author" content="dgeibi"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta name="renderer" content="webkit|ie-comp|ie-stand"><link rel="stylesheet" href="/css/style.css"><link rel="alternate" type="application/atom+xml" title="RSS" href="/atom.xml"><link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml"><link rel="canonical" href="https://blog.dgeibi.xyz/2016/11/01/openwrt-proxy/index.html"><link rel="icon" type="image/png" href="/favicon.png"><link rel="apple-touch-icon" sizes="256x256" href="/favicon.png"><link rel="manifest" href="/manifest.json"><script src="/js/main.js" defer></script></head><body><header class="site-header"><div class="wrapper"><a class="site-title" href="/">dgeibi's blog</a><nav class="site-nav"><a class="nav-item" href="/archives/">归档 </a><a class="nav-item" href="/about/">关于 </a><a class="nav-item" href="/atom.xml">Feed </a></nav></div></header><main class="page-content"><div class="wrapper"><article class="post"><header class="post-header"><h1 class="post-title" itemprop="name headline">OpenWrt Proxy</h1><section class="meta">发表于 <time datetime="2016-11-01T00:35:00+08:00">2016-11-01</time>&nbsp;|&nbsp;修改于 <time datetime="2017-01-10T17:38:19+08:00">2017-01-10</time></section><section class="meta"></section><section class="meta">标签: &nbsp;<span><a href="/archives/tags/network/">#网络</a></span></section></header><section id="toc"><h2 class="heading">Content</h2><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Install-Packages"><span class="toc-number">1.</span> <span class="toc-text">Install Packages</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Shadowsocks-Configuration"><span class="toc-number">2.</span> <span class="toc-text">Shadowsocks Configuration</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pcap-DNSProxy-Configuration"><span class="toc-number">3.</span> <span class="toc-text">Pcap_DNSProxy Configuration</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dnsmasq-Configuration"><span class="toc-number">4.</span> <span class="toc-text">Dnsmasq Configuration</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Apply-Firewall-Rules"><span class="toc-number">5.</span> <span class="toc-text">Apply Firewall Rules</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Build-into-Firmware"><span class="toc-number">6.</span> <span class="toc-text">Build into Firmware</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Thanks"><span class="toc-number">7.</span> <span class="toc-text">Thanks</span></a></li></ol></section><section class="post-content toc-src" itemprop="articleBody"><h2 id="Install-Packages"><a href="#Install-Packages" class="headerlink" title="Install Packages"></a>Install Packages</h2><p>You may build your own firmware with following packages:</p>
+<ul>
+<li>dnsmasq-full</li>
+<li>ipset</li>
+<li><a href="https://github.com/shadowsocks/openwrt-shadowsocks" target="_blank" rel="external">shadowsocks-libev</a></li>
+<li><a href="https://github.com/wongsyrone/openwrt-Pcap_DNSProxy" target="_blank" rel="external">pcap-dnsproxy</a></li>
+</ul>
+<p>Referring to two external packages’ README, <a href="https://wiki.openwrt.org/doc/howto/buildroot.exigence" target="_blank" rel="external">OpenWrt build system – Installation [OpenWrt Wiki]</a> and <a href="https://wiki.openwrt.org/doc/howto/build" target="_blank" rel="external">OpenWrt build system – Usage [OpenWrt Wiki]</a>, set up OpenWrt build system, and build your firmware.</p>
+<p><code>make menuconfig</code>:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">Base System</div><div class="line">            -&gt; &lt; &gt; dnsmasq</div><div class="line">            -&gt; &lt;*&gt; dnsmasq-full -&gt; &lt;*&gt; Build with IPset support.</div><div class="line">Network</div><div class="line">            -&gt; &lt;*&gt; ipset</div><div class="line">            -&gt; &lt;*&gt; shadowsocks-libev</div><div class="line">            -&gt; &lt;*&gt; pcap-dnsproxy</div></pre></td></tr></table></figure>
+<h2 id="Shadowsocks-Configuration"><a href="#Shadowsocks-Configuration" class="headerlink" title="Shadowsocks Configuration"></a>Shadowsocks Configuration</h2><p>Create <code>/etc/init.d/shadowsocks</code>:</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><div class="line"><span class="comment">#!/bin/sh /etc/rc.common</span></div><div class="line"></div><div class="line">START=95</div><div class="line">USE_PROCD=1</div><div class="line"></div><div class="line">CONFIG=<span class="string">"/etc/shadowsocks/ss.json"</span></div><div class="line"></div><div class="line"><span class="function"><span class="title">start_service</span></span>() &#123;</div><div class="line">    procd_open_instance</div><div class="line">    procd_set_param <span class="built_in">command</span> /usr/bin/ss-redir <span class="_">-a</span> nobody -c <span class="variable">$CONFIG</span> -b 0.0.0.0 <span class="_">-l</span> 10800</div><div class="line">    procd_set_param file <span class="variable">$CONFIG</span></div><div class="line">    procd_set_param stdout 1</div><div class="line">    procd_set_param stderr 1</div><div class="line">    procd_close_instance</div><div class="line">    procd_open_instance</div><div class="line">    procd_set_param <span class="built_in">command</span> /usr/bin/ss-local <span class="_">-a</span> nobody -c <span class="variable">$CONFIG</span> -b 127.0.0.1 <span class="_">-l</span> 1079</div><div class="line">    procd_set_param file <span class="variable">$CONFIG</span></div><div class="line">    procd_set_param stdout 1</div><div class="line">    procd_set_param stderr 1</div><div class="line">    procd_close_instance</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment"># launched through hotplug</span></div><div class="line"><span class="function"><span class="title">boot</span></span>() &#123;</div><div class="line">    <span class="built_in">return</span> 0</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>create a hotplug script for shadowsocks <a href="https://github.com/dgeibi/files-proxy/blob/master/etc/hotplug.d/iface/60-shadowsocks" target="_blank" rel="external">60-shadowsocks</a></p>
+<table>
+<thead>
+<tr>
+<th>program</th>
+<th>ip</th>
+<th>port</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ss-local</td>
+<td>127.0.0.1</td>
+<td>1079</td>
+</tr>
+<tr>
+<td>ss-redir</td>
+<td>0.0.0.0</td>
+<td>10800</td>
+</tr>
+</tbody>
+</table>
+<p>Use ss-local for it can provide a proxy for pcap-dnsproxy. ss-redir provides a transparent proxy for router.</p>
+<p>If your Shadowsocks server support UDP Redir, refer to <a href="https://github.com/wongsyrone/lede-1/blob/master/package/external/shadowsocks-libev/files/shadowsocks.init" target="_blank" rel="external">lede-1/shadowsocks.init</a>.</p>
+<h2 id="Pcap-DNSProxy-Configuration"><a href="#Pcap-DNSProxy-Configuration" class="headerlink" title="Pcap_DNSProxy Configuration"></a>Pcap_DNSProxy Configuration</h2><p>You should the official doucument before using pcap-dnsproxy.</p>
+<ul>
+<li><a href="https://github.com/chengr28/Pcap_DNSProxy" target="_blank" rel="external">chengr28/Pcap_DNSProxy</a></li>
+<li><a href="https://github.com/wongsyrone/openwrt-Pcap_DNSProxy" target="_blank" rel="external">wongsyrone/openwrt-Pcap_DNSProxy</a></li>
+</ul>
+<p>Modify <code>etc/config/pcap-dnsproxy</code>:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">config pcap-dnsproxy</div><div class="line">    option enabled     &apos;1&apos;</div></pre></td></tr></table></figure>
+<p>Modify <code>/etc/pcap-dnsproxy/Config.conf</code>:</p>
+<figure class="highlight"><table><tr><td class="code"><pre><div class="line">Local Main = 1</div><div class="line">Local Routing = 1</div><div class="line"></div><div class="line">[Proxy]</div><div class="line">SOCKS Proxy = 1</div><div class="line">SOCKS IPv4 Address = 127.0.0.1:1079</div><div class="line">SOCKS IPv6 Address = [::1]:1079</div></pre></td></tr></table></figure>
+<p>What have done above will make pcap-dnsproxy resolve domestic domains fast and get unpolluted DNS records.</p>
+<h2 id="Dnsmasq-Configuration"><a href="#Dnsmasq-Configuration" class="headerlink" title="Dnsmasq Configuration"></a>Dnsmasq Configuration</h2><p>Edit <code>/etc/dnsmasq.conf</code>:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line"># set dir placing other configurations</div><div class="line">conf-dir=/etc/dnsmasq.d</div><div class="line"></div><div class="line"># set DNS server for Shadowsocks server if needed</div><div class="line">server=/ss.com/119.29.29.29</div><div class="line"></div><div class="line"># set Pcap_DNSProxy as upstream resolver, replace 192.168.1.1 with your lan ip</div><div class="line">server=192.168.1.1#1053</div><div class="line"></div><div class="line"># only domain send requests</div><div class="line">domain-needed</div><div class="line"></div><div class="line"># ignore ISP DNS</div><div class="line">no-resolv</div><div class="line">no-poll</div><div class="line"></div><div class="line"># no caching non-existent domain</div><div class="line">no-negcache</div><div class="line"></div><div class="line"># increase the number of caching items</div><div class="line">cache-size=10000</div></pre></td></tr></table></figure>
+<p>Get <code>dnsmasq-blocklist.conf</code> from <a href="https://github.com/dgeibi/blocked" target="_blank" rel="external">dgeibi/blocked</a> and place it into <code>/etc/dnsmasq.d</code>. It contains domains which are blocked in China.</p>
+<p>Run following command to apply the configuration:</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><div class="line">/etc/init.d/dnsmasq restart</div><div class="line">/etc/init.d/shadowsocks start</div><div class="line">/etc/init.d/shadowsocks <span class="built_in">enable</span></div><div class="line">/etc/init.d/pcap-dnsproxy start</div></pre></td></tr></table></figure>
+<h2 id="Apply-Firewall-Rules"><a href="#Apply-Firewall-Rules" class="headerlink" title="Apply Firewall Rules"></a>Apply Firewall Rules</h2><p>Finally, run following commands in OpenWrt’s shell for testing.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><div class="line">ipset -N gfwlist iphash</div><div class="line">iptables -t nat -A PREROUTING -p tcp -m <span class="built_in">set</span> --match-set gfwlist dst -j REDIRECT --to-port 10800</div></pre></td></tr></table></figure>
+<p>If it works, add the commands above to <code>/etc/firewall.user</code>.</p>
+<p>Note: If pcap-dnsproxy and shadowsocks do not start after your router’s system reboot, they may be trying to start before the network interface is fully up. Modifying hotplug scripts and init scripts may help, please refer to <a href="https://github.com/dgeibi/files-proxy" target="_blank" rel="external">dgeibi/files-proxy</a>.</p>
+<h2 id="Build-into-Firmware"><a href="#Build-into-Firmware" class="headerlink" title="Build into Firmware"></a>Build into Firmware</h2><figure class="highlight sh"><table><tr><td class="code"><pre><div class="line"><span class="built_in">cd</span> openwrt <span class="comment"># cd OpenWrt build dir</span></div><div class="line">git <span class="built_in">clone</span> https://github.com/dgeibi/files-proxy.git files</div></pre></td></tr></table></figure>
+<p>Modify configurations in files and build again.</p>
+<h2 id="Thanks"><a href="#Thanks" class="headerlink" title="Thanks"></a>Thanks</h2><ul>
+<li><a href="https://github.com/shadowsocks/shadowsocks-libev" target="_blank" rel="external">shadowsocks/shadowsocks-libev: libev port of shadowsocks</a></li>
+<li><a href="https://github.com/shadowsocks/openwrt-shadowsocks" target="_blank" rel="external">shadowsocks/openwrt-shadowsocks: Shadowsocks-libev for OpenWrt</a></li>
+<li><a href="https://github.com/chengr28/Pcap_DNSProxy" target="_blank" rel="external">chengr28/Pcap_DNSProxy: A local DNS server based on WinPcap and LibPcap</a></li>
+<li><a href="https://github.com/wongsyrone/openwrt-Pcap_DNSProxy" target="_blank" rel="external">wongsyrone/openwrt-Pcap_DNSProxy: Pcap_DNSProxy for OpenWrt/LEDE</a></li>
+<li><a href="https://github.com/wongsyrone/lede-1" target="_blank" rel="external">wongsyrone/lede-1: LEDE Project with modifications</a></li>
+</ul>
+</section></article></div></main><footer class="site-footer"><section><small>&copy; 2015-2017
+ dgeibi <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></small></section><section><small>Powered by <a href="https://hexo.io">Hexo</a>. Theme by <a href="https://github.com/dgeibi">dgeibi</a>.</small></section></footer><a class="back-to-top" data-js-backtotop href="#" title="Back to top">&uarr;</a></body></html>

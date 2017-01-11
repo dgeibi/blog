@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://blog.dgeibi.xyz/"/>
-  <updated>2017-01-11T12:27:16.138Z</updated>
+  <updated>2017-01-10T09:38:19.000Z</updated>
   <id>https://blog.dgeibi.xyz/</id>
   
   <author>
@@ -14,40 +14,6 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
-  
-  <entry>
-    <title>hexo dffa</title>
-    <link href="https://blog.dgeibi.xyz/2017/01/11/hexo-dffa/"/>
-    <id>https://blog.dgeibi.xyz/2017/01/11/hexo-dffa/</id>
-    <published>2017-01-11T12:27:16.000Z</published>
-    <updated>2017-01-11T12:27:16.138Z</updated>
-    
-    <summary type="html">
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>hexo da</title>
-    <link href="https://blog.dgeibi.xyz/2017/01/11/hexo-da/"/>
-    <id>https://blog.dgeibi.xyz/2017/01/11/hexo-da/</id>
-    <published>2017-01-11T12:26:37.000Z</published>
-    <updated>2017-01-11T12:26:55.788Z</updated>
-    
-    <content type="html"><![CDATA[<p>xxxxxx</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;xxxxxx&lt;/p&gt;
-
-    
-    </summary>
-    
-    
-  </entry>
   
   <entry>
     <title>OpenWrt Proxy</title>
