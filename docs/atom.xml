@@ -1,0 +1,548 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>dgeibi&#39;s blog</title>
+  
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="https://blog.dgeibi.xyz/"/>
+  <updated>2017-01-11T12:27:16.138Z</updated>
+  <id>https://blog.dgeibi.xyz/</id>
+  
+  <author>
+    <name>dgeibi</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>hexo dffa</title>
+    <link href="https://blog.dgeibi.xyz/2017/01/11/hexo-dffa/"/>
+    <id>https://blog.dgeibi.xyz/2017/01/11/hexo-dffa/</id>
+    <published>2017-01-11T12:27:16.000Z</published>
+    <updated>2017-01-11T12:27:16.138Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>hexo da</title>
+    <link href="https://blog.dgeibi.xyz/2017/01/11/hexo-da/"/>
+    <id>https://blog.dgeibi.xyz/2017/01/11/hexo-da/</id>
+    <published>2017-01-11T12:26:37.000Z</published>
+    <updated>2017-01-11T12:26:55.788Z</updated>
+    
+    <content type="html"><![CDATA[<p>xxxxxx</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;xxxxxx&lt;/p&gt;
+
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>OpenWrt Proxy</title>
+    <link href="https://blog.dgeibi.xyz/2016/11/01/openwrt-proxy/"/>
+    <id>https://blog.dgeibi.xyz/2016/11/01/openwrt-proxy/</id>
+    <published>2016-10-31T16:35:00.000Z</published>
+    <updated>2017-01-10T09:38:19.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="Install-Packages"><a href="#Install-Packages" class="headerlink" title="Install Packages"></a>Install Packages</h2><p>You may build your own firmware with following packages:</p>
+<ul>
+<li>dnsmasq-full</li>
+<li>ipset</li>
+<li><a href="https://github.com/shadowsocks/openwrt-shadowsocks" target="_blank" rel="external">shadowsocks-libev</a></li>
+<li><a href="https://github.com/wongsyrone/openwrt-Pcap_DNSProxy" target="_blank" rel="external">pcap-dnsproxy</a></li>
+</ul>
+<p>Referring to two external packages’ README, <a href="https://wiki.openwrt.org/doc/howto/buildroot.exigence" target="_blank" rel="external">OpenWrt build system – Installation [OpenWrt Wiki]</a> and <a href="https://wiki.openwrt.org/doc/howto/build" target="_blank" rel="external">OpenWrt build system – Usage [OpenWrt Wiki]</a>, set up OpenWrt build system, and build your firmware.</p>
+<p><code>make menuconfig</code>:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">Base System</div><div class="line">            -&gt; &lt; &gt; dnsmasq</div><div class="line">            -&gt; &lt;*&gt; dnsmasq-full -&gt; &lt;*&gt; Build with IPset support.</div><div class="line">Network</div><div class="line">            -&gt; &lt;*&gt; ipset</div><div class="line">            -&gt; &lt;*&gt; shadowsocks-libev</div><div class="line">            -&gt; &lt;*&gt; pcap-dnsproxy</div></pre></td></tr></table></figure>
+<h2 id="Shadowsocks-Configuration"><a href="#Shadowsocks-Configuration" class="headerlink" title="Shadowsocks Configuration"></a>Shadowsocks Configuration</h2><p>Create <code>/etc/init.d/shadowsocks</code>:</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><div class="line"><span class="comment">#!/bin/sh /etc/rc.common</span></div><div class="line"></div><div class="line">START=95</div><div class="line">USE_PROCD=1</div><div class="line"></div><div class="line">CONFIG=<span class="string">"/etc/shadowsocks/ss.json"</span></div><div class="line"></div><div class="line"><span class="function"><span class="title">start_service</span></span>() &#123;</div><div class="line">    procd_open_instance</div><div class="line">    procd_set_param <span class="built_in">command</span> /usr/bin/ss-redir <span class="_">-a</span> nobody -c <span class="variable">$CONFIG</span> -b 0.0.0.0 <span class="_">-l</span> 10800</div><div class="line">    procd_set_param file <span class="variable">$CONFIG</span></div><div class="line">    procd_set_param stdout 1</div><div class="line">    procd_set_param stderr 1</div><div class="line">    procd_close_instance</div><div class="line">    procd_open_instance</div><div class="line">    procd_set_param <span class="built_in">command</span> /usr/bin/ss-local <span class="_">-a</span> nobody -c <span class="variable">$CONFIG</span> -b 127.0.0.1 <span class="_">-l</span> 1079</div><div class="line">    procd_set_param file <span class="variable">$CONFIG</span></div><div class="line">    procd_set_param stdout 1</div><div class="line">    procd_set_param stderr 1</div><div class="line">    procd_close_instance</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment"># launched through hotplug</span></div><div class="line"><span class="function"><span class="title">boot</span></span>() &#123;</div><div class="line">    <span class="built_in">return</span> 0</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>create a hotplug script for shadowsocks <a href="https://github.com/dgeibi/files-proxy/blob/master/etc/hotplug.d/iface/60-shadowsocks" target="_blank" rel="external">60-shadowsocks</a></p>
+<table>
+<thead>
+<tr>
+<th>program</th>
+<th>ip</th>
+<th>port</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ss-local</td>
+<td>127.0.0.1</td>
+<td>1079</td>
+</tr>
+<tr>
+<td>ss-redir</td>
+<td>0.0.0.0</td>
+<td>10800</td>
+</tr>
+</tbody>
+</table>
+<p>Use ss-local for it can provide a proxy for pcap-dnsproxy. ss-redir provides a transparent proxy for router.</p>
+<p>If your Shadowsocks server support UDP Redir, refer to <a href="https://github.com/wongsyrone/lede-1/blob/master/package/external/shadowsocks-libev/files/shadowsocks.init" target="_blank" rel="external">lede-1/shadowsocks.init</a>.</p>
+<h2 id="Pcap-DNSProxy-Configuration"><a href="#Pcap-DNSProxy-Configuration" class="headerlink" title="Pcap_DNSProxy Configuration"></a>Pcap_DNSProxy Configuration</h2><p>You should the official doucument before using pcap-dnsproxy.</p>
+<ul>
+<li><a href="https://github.com/chengr28/Pcap_DNSProxy" target="_blank" rel="external">chengr28/Pcap_DNSProxy</a></li>
+<li><a href="https://github.com/wongsyrone/openwrt-Pcap_DNSProxy" target="_blank" rel="external">wongsyrone/openwrt-Pcap_DNSProxy</a></li>
+</ul>
+<p>Modify <code>etc/config/pcap-dnsproxy</code>:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">config pcap-dnsproxy</div><div class="line">    option enabled     &apos;1&apos;</div></pre></td></tr></table></figure>
+<p>Modify <code>/etc/pcap-dnsproxy/Config.conf</code>:</p>
+<figure class="highlight"><table><tr><td class="code"><pre><div class="line">Local Main = 1</div><div class="line">Local Routing = 1</div><div class="line"></div><div class="line">[Proxy]</div><div class="line">SOCKS Proxy = 1</div><div class="line">SOCKS IPv4 Address = 127.0.0.1:1079</div><div class="line">SOCKS IPv6 Address = [::1]:1079</div></pre></td></tr></table></figure>
+<p>What have done above will make pcap-dnsproxy resolve domestic domains fast and get unpolluted DNS records.</p>
+<h2 id="Dnsmasq-Configuration"><a href="#Dnsmasq-Configuration" class="headerlink" title="Dnsmasq Configuration"></a>Dnsmasq Configuration</h2><p>Edit <code>/etc/dnsmasq.conf</code>:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line"># set dir placing other configurations</div><div class="line">conf-dir=/etc/dnsmasq.d</div><div class="line"></div><div class="line"># set DNS server for Shadowsocks server if needed</div><div class="line">server=/ss.com/119.29.29.29</div><div class="line"></div><div class="line"># set Pcap_DNSProxy as upstream resolver, replace 192.168.1.1 with your lan ip</div><div class="line">server=192.168.1.1#1053</div><div class="line"></div><div class="line"># only domain send requests</div><div class="line">domain-needed</div><div class="line"></div><div class="line"># ignore ISP DNS</div><div class="line">no-resolv</div><div class="line">no-poll</div><div class="line"></div><div class="line"># no caching non-existent domain</div><div class="line">no-negcache</div><div class="line"></div><div class="line"># increase the number of caching items</div><div class="line">cache-size=10000</div></pre></td></tr></table></figure>
+<p>Get <code>dnsmasq-blocklist.conf</code> from <a href="https://github.com/dgeibi/blocked" target="_blank" rel="external">dgeibi/blocked</a> and place it into <code>/etc/dnsmasq.d</code>. It contains domains which are blocked in China.</p>
+<p>Run following command to apply the configuration:</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><div class="line">/etc/init.d/dnsmasq restart</div><div class="line">/etc/init.d/shadowsocks start</div><div class="line">/etc/init.d/shadowsocks <span class="built_in">enable</span></div><div class="line">/etc/init.d/pcap-dnsproxy start</div></pre></td></tr></table></figure>
+<h2 id="Apply-Firewall-Rules"><a href="#Apply-Firewall-Rules" class="headerlink" title="Apply Firewall Rules"></a>Apply Firewall Rules</h2><p>Finally, run following commands in OpenWrt’s shell for testing.</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><div class="line">ipset -N gfwlist iphash</div><div class="line">iptables -t nat -A PREROUTING -p tcp -m <span class="built_in">set</span> --match-set gfwlist dst -j REDIRECT --to-port 10800</div></pre></td></tr></table></figure>
+<p>If it works, add the commands above to <code>/etc/firewall.user</code>.</p>
+<p>Note: If pcap-dnsproxy and shadowsocks do not start after your router’s system reboot, they may be trying to start before the network interface is fully up. Modifying hotplug scripts and init scripts may help, please refer to <a href="https://github.com/dgeibi/files-proxy" target="_blank" rel="external">dgeibi/files-proxy</a>.</p>
+<h2 id="Build-into-Firmware"><a href="#Build-into-Firmware" class="headerlink" title="Build into Firmware"></a>Build into Firmware</h2><figure class="highlight sh"><table><tr><td class="code"><pre><div class="line"><span class="built_in">cd</span> openwrt <span class="comment"># cd OpenWrt build dir</span></div><div class="line">git <span class="built_in">clone</span> https://github.com/dgeibi/files-proxy.git files</div></pre></td></tr></table></figure>
+<p>Modify configurations in files and build again.</p>
+<h2 id="Thanks"><a href="#Thanks" class="headerlink" title="Thanks"></a>Thanks</h2><ul>
+<li><a href="https://github.com/shadowsocks/shadowsocks-libev" target="_blank" rel="external">shadowsocks/shadowsocks-libev: libev port of shadowsocks</a></li>
+<li><a href="https://github.com/shadowsocks/openwrt-shadowsocks" target="_blank" rel="external">shadowsocks/openwrt-shadowsocks: Shadowsocks-libev for OpenWrt</a></li>
+<li><a href="https://github.com/chengr28/Pcap_DNSProxy" target="_blank" rel="external">chengr28/Pcap_DNSProxy: A local DNS server based on WinPcap and LibPcap</a></li>
+<li><a href="https://github.com/wongsyrone/openwrt-Pcap_DNSProxy" target="_blank" rel="external">wongsyrone/openwrt-Pcap_DNSProxy: Pcap_DNSProxy for OpenWrt/LEDE</a></li>
+<li><a href="https://github.com/wongsyrone/lede-1" target="_blank" rel="external">wongsyrone/lede-1: LEDE Project with modifications</a></li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;Install-Packages&quot;&gt;&lt;a href=&quot;#Install-Packages&quot; class=&quot;headerlink&quot; title=&quot;Install Packages&quot;&gt;&lt;/a&gt;Install Packages&lt;/h2&gt;&lt;p&gt;You may build 
+    
+    </summary>
+    
+    
+      <category term="网络" scheme="https://blog.dgeibi.xyz/archives/tags/network/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>编译自带 Drcom 的 OpenWrt 固件</title>
+    <link href="https://blog.dgeibi.xyz/2016/10/12/build-openwrt-with-drcom/"/>
+    <id>https://blog.dgeibi.xyz/2016/10/12/build-openwrt-with-drcom/</id>
+    <published>2016-10-12T06:03:19.000Z</published>
+    <updated>2017-01-11T08:07:31.739Z</updated>
+    
+    <content type="html"><![CDATA[<p>感谢：</p>
+<ul>
+<li><a href="https://wiki.openwrt.org/doc/howto/obtain.firmware.generate" target="_blank" rel="external">Image Generator (Image Builder) - EN [OpenWrt Wiki]</a></li>
+<li><a href="http://openwrt.proxy.ustclug.org/" target="_blank" rel="external">OpenWrt Downloads - 中科大镜像</a></li>
+</ul>
+<p>本文假定使用的路由器：GL-iNet 6416A v1，使用的 CPU：ar71xx/generic；OpenWrt：15.05.1；Drcom：5.2.1(p)。</p>
+<h2 id="获取-Image-Builder"><a href="#获取-Image-Builder" class="headerlink" title="获取 Image Builder"></a>获取 Image Builder</h2><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line"><span class="built_in">cd</span> ~</div><div class="line">mkdir openwrt &amp;&amp; <span class="built_in">cd</span> openwrt</div><div class="line">wget http://openwrt.proxy.ustclug.org/chaos_calmer/15.05.1/ar71xx/generic/OpenWrt-ImageBuilder-15.05.1-ar71xx-generic.Linux-x86_64.tar.bz2</div></pre></td></tr></table></figure>
+<h2 id="修改-repositories-conf"><a href="#修改-repositories-conf" class="headerlink" title="修改 repositories.conf"></a>修改 repositories.conf</h2><p>修改 repositories.conf 如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">src/gz chaos_calmer_base http://openwrt.proxy.ustclug.org/chaos_calmer/15.05.1/ar71xx/generic/packages/base</div><div class="line">src/gz chaos_calmer_luci http://openwrt.proxy.ustclug.org/chaos_calmer/15.05.1/ar71xx/generic/packages/luci</div><div class="line">src/gz chaos_calmer_management http://openwrt.proxy.ustclug.org/chaos_calmer/15.05.1/ar71xx/generic/packages/management</div><div class="line">src/gz chaos_calmer_packages http://openwrt.proxy.ustclug.org/chaos_calmer/15.05.1/ar71xx/generic/packages/packages</div><div class="line">src/gz chaos_calmer_routing http://openwrt.proxy.ustclug.org/chaos_calmer/15.05.1/ar71xx/generic/packages/routing</div><div class="line">src/gz chaos_calmer_telephony http://openwrt.proxy.ustclug.org/chaos_calmer/15.05.1/ar71xx/generic/packages/telephony</div><div class="line">src imagebuilder file:packages</div></pre></td></tr></table></figure>
+<h2 id="安装-make-的依赖"><a href="#安装-make-的依赖" class="headerlink" title="安装 make 的依赖"></a>安装 make 的依赖</h2><p>Debian/Ubuntu</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">apt-get install subversion build-essential libncurses5-dev zlib1g-dev gawk git ccache gettext libssl-dev xsltproc wget</div></pre></td></tr></table></figure>
+<p>CentOS/RHEL</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">yum install subversion git gawk gettext ncurses-devel zlib-devel openssl-devel libxslt wget</div><div class="line">yum group install <span class="string">"Development Tools"</span></div></pre></td></tr></table></figure>
+<h2 id="修改-Makefile"><a href="#修改-Makefile" class="headerlink" title="修改 Makefile"></a>修改 Makefile</h2><figure class="highlight makefile"><table><tr><td class="code"><pre><div class="line">	<span class="variable">$(OPKG)</span> update || true; \</div><div class="line">	fi</div><div class="line">	<span class="variable">$(MAKE)</span> package_install</div><div class="line">	# 添加以下 1 行，注意缩进，用 tab</div><div class="line">	sed -i '/proto_run_command/i username=`echo -e <span class="string">"$$username"</span>`' <span class="string">"$(TARGET_DIR)/lib/netifd/proto/ppp.sh"</span></div><div class="line">ifneq ($(USER_FILES),)</div><div class="line">	<span class="variable">$(MAKE)</span> copy_files</div><div class="line">endif</div></pre></td></tr></table></figure>
+<p>不明白为什么要这样做的同学，请先看 <a href="/2016/10/08/drcom/">Drcom 折腾记录</a>。</p>
+<h2 id="配置文件的准备"><a href="#配置文件的准备" class="headerlink" title="配置文件的准备"></a>配置文件的准备</h2><p>新建一个 <code>files</code> 目录，将所需的文件放在相应目录，以制作带有自定义文件的固件。</p>
+<p>Drcom 认证需要的文件（可以从 <a href="/2016/10/08/drcom/">Drcom 折腾记录</a> 获取）：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">files/</div><div class="line">├── etc/</div><div class="line">│   ├── drcom.conf</div><div class="line">│   └── hotplug.d/</div><div class="line">│       └── iface/</div><div class="line">│           └── 99-drcom</div><div class="line">└── usr/</div><div class="line">    └── bin/</div><div class="line">        └── drcom</div></pre></td></tr></table></figure>
+<p>可以用 <code>scp</code> 备份其它配置文件：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">mkdir -p files/etc/config</div><div class="line">scp root@192.168.1.1:<span class="string">"/etc/config/network /etc/config/luci /etc/config/wireless /etc/config/firewall"</span> files/etc/config/</div><div class="line">scp root@192.168.1.1:<span class="string">"/etc/sysupgrade.conf"</span> files/etc/</div></pre></td></tr></table></figure>
+<p>也可以登录 luci，系统 -&gt; 备份 / 升级 -&gt; 生成备份，获得配置文件的压缩包。</p>
+<h2 id="编译固件"><a href="#编译固件" class="headerlink" title="编译固件"></a>编译固件</h2><p>语法：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">make image PROFILE=XXX PACKAGES=<span class="string">"pkg1 pkg2 pkg3 -pkg4 -pkg5 -pkg6"</span> FILES=files/</div></pre></td></tr></table></figure>
+<ul>
+<li>PROFILE：含有要编译的型号的配置；通过执行 <code>make info</code>，查看可用的选项。</li>
+<li>PACKAGES：要编译进固件的包</li>
+<li>FILES：包含要添加到固件的文件的文件夹</li>
+</ul>
+<p>现在执行下面的命令的可以编译出自带 Drcom 的固件。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">make image PROFILE=<span class="string">"GLINET"</span> PACKAGES=<span class="string">"luci luci-i18n-base-zh-cn python-light python-logging python-openssl python-codecs"</span> FILES=files/</div></pre></td></tr></table></figure>
+<p>所得固件在 <code>bin/ar71xx</code>。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;感谢：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://wiki.openwrt.org/doc/howto/obtain.firmware.generate&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Image Generator (Im
+    
+    </summary>
+    
+    
+      <category term="OpenWrt" scheme="https://blog.dgeibi.xyz/archives/tags/openwrt/"/>
+    
+      <category term="网络" scheme="https://blog.dgeibi.xyz/archives/tags/network/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Drcom 折腾记录</title>
+    <link href="https://blog.dgeibi.xyz/2016/10/08/drcom/"/>
+    <id>https://blog.dgeibi.xyz/2016/10/08/drcom/</id>
+    <published>2016-10-08T13:36:17.000Z</published>
+    <updated>2017-01-11T07:12:59.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>2016 年 10 月 8 日，校园网认证客户端换成了 drcom，版本为 5.2.1(p)。使用 Linux 的我不得不再折腾 :(</p>
+<h2 id="可行性测试"><a href="#可行性测试" class="headerlink" title="可行性测试"></a>可行性测试</h2><p>首先，参考 <a href="https://github.com/drcoms/drcom-generic/wiki/p%E7%89%88%E7%AE%80%E7%95%A5%E4%BD%BF%E7%94%A8%E5%92%8C%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E" target="_blank" rel="external">p 版简略使用和配置说明</a> 抓包，生成 <code>config.txt</code>，重命名为 <code>drcom.conf</code>。可是在 “PC 上测试” 那一步卡住，拨号失败了。</p>
+<p>参考 <a href="https://github.com/drcoms/drcom-generic/wiki/%E5%85%B3%E4%BA%8EP%E7%89%88%E7%9A%84PPPoE%E6%8B%A8%E5%8F%B7%E9%97%AE%E9%A2%98" target="_blank" rel="external">关于 P 版的 PPPoE 拨号问题</a>，发现用户名（账号）前多了 <code>\r\n</code>，利用 wiki 中的方法让 PC/OpenWrt 成功拨号，连接上了，能够上网。</p>
+<p>OpenWrt 下需要对 <code>/lib/netifd/proto/ppp.sh</code> 打补丁，运行以下命令即可。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><div class="line"><span class="meta">#!/bin/sh</span></div><div class="line">cp /lib/netifd/proto/ppp.sh /lib/netifd/proto/ppp.sh_bak</div><div class="line">sed -i <span class="string">'/proto_run_command/i username=`echo -e "$username"`'</span> /lib/netifd/proto/ppp.sh</div></pre></td></tr></table></figure>
+<p>然而，这并不完美，PPPoE 每 1-2 分钟断开一次，所以需要继续折腾。可是，继续原来的教程，运行当时仓库的 python 脚本 latest-pppoe.py，一堆错误，认证失败了，该断的时候还是断了。翻了一下 <a href="https://github.com/drcoms/drcom-generic" target="_blank" rel="external">drcoms/drcom-generic</a> 的 closed Issues，发现很多和 5.2.1(p) 相关的 Issue，测试大大们提供的脚本，结果表明 <a href="https://github.com/drcoms/drcom-generic/issues/116#issuecomment-250953770" target="_blank" rel="external">Issue #116</a> 在我所在环境有效。值得注意的是所有的文件的换行字元都必须为 <code>LF</code>（Unix 的换行字元），不能是 <code>CRLF</code>（Windows 的换行字元），可用 <a href="https://code.visualstudio.com/" target="_blank" rel="external">Visual Studio Code</a>、<a href="https://atom.io/" target="_blank" rel="external">Atom</a> 等现代编辑器修改文件的换行字元。</p>
+<p><strong>有些路由器可能一直不能成功拨号，我猜测是因为改过硬件，没有有效的 MAC</strong></p>
+<p>解决方法：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">ssh root@192.168.1.1</div><div class="line">uci <span class="built_in">set</span> network.wan.macaddr=<span class="string">'xx:xx:xx:xx:xx:xx'</span></div><div class="line">uci commit network</div><div class="line">/etc/init.d/network reload</div></pre></td></tr></table></figure>
+<p><code>xx:xx:xx:xx:xx:xx</code> 为 MAC 地址，可以用电脑的。这里有 <a href="http://aruljohn.com/mac/D864C75EF1C6" target="_blank" rel="external">查看电脑 MAC 地址的方法</a>。</p>
+<h2 id="在-OpenWrt-上安装-Python-2"><a href="#在-OpenWrt-上安装-Python-2" class="headerlink" title="在 OpenWrt 上安装 Python 2"></a>在 OpenWrt 上安装 Python 2</h2><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">ssh root@192.168.1.1</div><div class="line">opkg update</div><div class="line"><span class="comment"># OpenWrt 15.05+</span></div><div class="line">opkg install python-light python-logging python-openssl python-codecs</div><div class="line"><span class="comment"># OpenWrt 14.07</span></div><div class="line">opkg install python-mini</div><div class="line"></div><div class="line"><span class="built_in">exit</span></div></pre></td></tr></table></figure>
+<p>如果无法安装，则需要检查一下软件源。15.05 以上软件源信息在 <code>/etc/opkg/distfeeds.conf</code>，老版本的在 <code>/etc/opkg.conf</code>，根据以下格式修改之。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><div class="line"><span class="comment"># 15.05.1/ar71xx/generic 的软件源，ar71xx/generic 为硬件类型</span></div><div class="line">src/gz chaos_calmer_base http://openwrt.proxy.ustclug.org/chaos_calmer/15.05.1/ar71xx/generic/packages/base</div><div class="line">src/gz chaos_calmer_luci http://openwrt.proxy.ustclug.org/chaos_calmer/15.05.1/ar71xx/generic/packages/luci</div><div class="line">src/gz chaos_calmer_management http://openwrt.proxy.ustclug.org/chaos_calmer/15.05.1/ar71xx/generic/packages/management</div><div class="line">src/gz chaos_calmer_packages http://openwrt.proxy.ustclug.org/chaos_calmer/15.05.1/ar71xx/generic/packages/packages</div><div class="line">src/gz chaos_calmer_routing http://openwrt.proxy.ustclug.org/chaos_calmer/15.05.1/ar71xx/generic/packages/routing</div><div class="line">src/gz chaos_calmer_telephony http://openwrt.proxy.ustclug.org/chaos_calmer/15.05.1/ar71xx/generic/packages/telephony</div></pre></td></tr></table></figure>
+<p>也可以自己编译带 Python 的固件，当然能够 <a href="/2016/10/12/build-openwrt-with-drcom/">编译自带 Drcom 的 OpenWrt 固件</a> 就更好了。</p>
+<h2 id="文件的准备与部署"><a href="#文件的准备与部署" class="headerlink" title="文件的准备与部署"></a>文件的准备与部署</h2><p>以下文件需要放在相应的文件夹中，以方便部署。</p>
+<p>etc/drcom.conf:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">server = &apos;10.0.3.2&apos;</div><div class="line">PPPoE_flag = &apos;\x6b&apos;</div><div class="line">keep_alive2_flag = &apos;\xdc&apos;</div></pre></td></tr></table></figure>
+<p>经 <a href="https://github.com/drcoms/drcom-generic/issues/150" target="_blank" rel="external">Issue #150 · drcoms/drcom-generic</a> 提醒 drcom.conf 的 PPPoE_flag 更新了，奇怪的是通过上文提到的步骤抓出来的 PPPoE_flag 还是 <code>\x6a</code>。我没有验证过，因为我目前在用 C 写的 <a href="https://github.com/chenhaowen01/gdut-drcom-for-openwrt" target="_blank" rel="external">chenhaowen01/gdut-drcom-for-openwrt</a>。</p>
+<p>usr/bin/drcom: 可用的 python 脚本，如 <a href="https://github.com/drcoms/drcom-generic/issues/116#issuecomment-250953770" target="_blank" rel="external">Issue #116</a> （将 <code>IS_TEST</code> 的值改为 <code>False</code>）。注：现在直接用仓库的最新的 <code>latest-pppoe.py</code> 就可以。</p>
+<p>最后，需要让 python 脚本在 PPPoE 拨通后自动执行。需要额外的脚本，见下面的 99-drcom。其实，wiki 上就有，只是改了 wan 口的名称而已。</p>
+<p>etc/hotplug.d/iface/99-drcom:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><div class="line"><span class="meta">#!/bin/sh</span></div><div class="line">[ <span class="string">"<span class="variable">$ACTION</span>"</span> = ifup ] || <span class="built_in">exit</span> 0</div><div class="line">[ <span class="string">"<span class="variable">$INTERFACE</span>"</span> = wan ] || <span class="built_in">exit</span> 0</div><div class="line">sleep 10</div><div class="line">/usr/bin/drcom</div></pre></td></tr></table></figure>
+<p>赋予脚本可执行的权限，也可以在部署、ssh 登录后再做</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">chmod +x usr/bin/drcom</div></pre></td></tr></table></figure>
+<p>将所有文件上传到 OpenWrt</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">scp -r usr etc root@192.168.1.1:/</div></pre></td></tr></table></figure>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;2016 年 10 月 8 日，校园网认证客户端换成了 drcom，版本为 5.2.1(p)。使用 Linux 的我不得不再折腾 :(&lt;/p&gt;
+&lt;h2 id=&quot;可行性测试&quot;&gt;&lt;a href=&quot;#可行性测试&quot; class=&quot;headerlink&quot; title=&quot;可行性测试&quot;&gt;
+    
+    </summary>
+    
+    
+      <category term="OpenWrt" scheme="https://blog.dgeibi.xyz/archives/tags/openwrt/"/>
+    
+      <category term="网络" scheme="https://blog.dgeibi.xyz/archives/tags/network/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>「热爱学习」的我</title>
+    <link href="https://blog.dgeibi.xyz/2016/09/15/me/"/>
+    <id>https://blog.dgeibi.xyz/2016/09/15/me/</id>
+    <published>2016-09-15T03:20:17.000Z</published>
+    <updated>2017-01-10T05:26:17.159Z</updated>
+    
+    <content type="html"><![CDATA[<p>小学，装逼地用现成的工具破解卡巴斯基，让电脑死机。</p>
+<p>初中，下载安装「一键升级至 win7.exe」，让电脑开不了机。</p>
+<p>高中，刷 Galaxy Ace，一路从 Android 2.3 刷到 4.2.2，但它性能依旧垃圾。</p>
+<p>未使用 Linux 前，一直在解决 Windows 各种强迫症无法容忍的问题。</p>
+<p>一段时间内，推特关注一堆国内外大神，看不懂或者无法体会他们发的推文；关注 9GAG 等搞笑 gif 号，发现自己很「搞笑」；关注 chinagfw，生怕自己翻不出去，然而事实证明商家提供的 SS 比较可靠，没有出现长时间挂掉的情况。</p>
+<p>大一上，为了无痛使用 Linux，买了刷了 OpenWrt 自带 njit8021xclient 的路由器，后因瞎折腾弄坏；考虑隐私安全问题，自己捣鼓编译 OpenWrt 和校园网验证软件，幸好找到 @hazytint 师兄 / 师姐写的 gduth3c，但折腾了许久才编译成功。</p>
+<p>大一上，作为 Linux 菜鸟，参考已有的 wiki 与其他人的安装脚本安装 Arch Linux，试用了几个主流的桌面环境，最终只用 i3wm 这个窗口管理器。粗浅地学习 bash 以及常用工具的命令；弄了一个 dotfiles 仓库，以及恢复环境的脚本，希望以后少折腾这些东西。</p>
+<p>大一下，听说工作室招新，经过搜索、考虑，将前端开发作为方向。不料，面试中意的工作室时，在一面（人品面）就被刷了，可能与我胡乱折腾和社交上的自我贬低有关。当然，之后我坚持这个方向到现在，买了多本有关 JavaScript 的书，相信走野路子也能成为大神。后来，读了《黑客与画家》了解 Lisp 的优越性，想通过看 SICP 学习 Scheme。但是，处于下半学期，「忙于」部门事务的我，没能处理好学习与工作，很多自学的任务都没安排，仅仅以忙于复习四级词汇为借口。</p>
+<p>大一暑假，原本要看 SICP 英文版的，但由于懒惰，搁置了。仅仅抱着《JavaScript 高级程序设计》，每天看一点点，很少写 demo，只是做了笔记。感觉暑假浪费了 =(</p>
+<p>大二初，读 <a href="http://zhibimo.com/read/xiaolai/ba-shi-jian-dang-zuo-peng-you/index.html" target="_blank" rel="external">把时间当作朋友</a> 想改变自己，搞些事情。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;小学，装逼地用现成的工具破解卡巴斯基，让电脑死机。&lt;/p&gt;
+&lt;p&gt;初中，下载安装「一键升级至 win7.exe」，让电脑开不了机。&lt;/p&gt;
+&lt;p&gt;高中，刷 Galaxy Ace，一路从 Android 2.3 刷到 4.2.2，但它性能依旧垃圾。&lt;/p&gt;
+&lt;p&gt;未使用 Li
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>学习部不散</title>
+    <link href="https://blog.dgeibi.xyz/2016/06/07/bye-learning-department/"/>
+    <id>https://blog.dgeibi.xyz/2016/06/07/bye-learning-department/</id>
+    <published>2016-06-07T04:42:43.000Z</published>
+    <updated>2017-01-10T05:26:13.319Z</updated>
+    
+    <content type="html"><![CDATA[<p><em>本文为最后一次例会的发言稿</em></p>
+<p>首先，很荣幸能以 15 届学习部成员的身份在此发言。刚上大学，家人因为嫌我沉默寡言，劝我加入学生会，姐夫以前就是学习部的，就让我加入学习部，最终我也侥幸加入了学习部。经过一年，我虽然没变得与任何人都谈得来，但知道有些改不了的东西就不要强求，然而，我知道当代部之后我「变了」，正如你们所说的，所以可以说我加入学习部的初衷已经实现。</p>
+<p>学习部是团结的，每个人都无私地为一个目标而奋斗；我们每个人都有自己的性格，P 魔如、路痴标、矫情鹏、污烁、蜜西帆等标签记录着不同成员的个性，在学习部里发生化学反应，产生别样的火花。</p>
+<p>感谢四位部长和其他干事们，与你们相处的这一年是我一生中最幸福的一年。与你们相处的点点滴滴，让大家都能感受到家的感觉，以至于「爱你」，「么么哒」等字眼在学习部里不再肉麻。特别感谢嘉烁师兄，他声称自己为了部门的氛围而变「污」，然而，我觉得这是他的本性。</p>
+<p>我们有很多共同的回忆。还记得师兄师姐们带给小干的华农酸奶，圣诞夜的苹果，例如姐姐精心烹饪的布丁，木奶密西西，鸡汤…… 大夫山自行车上嘉烁被吓尿的神情，唱 K 时每个人的倾情演唱，半夜三更天台上关于人生的探讨，以关爱智障儿童为主题的水枪大战，第三组代部的每周一浪，每个人都在服务中学习，在学习中服务……</p>
+<p>美好的回忆与可爱的人，让我担心，下学期，我该怎么找到这种感觉，我怎么拥有这种归属感？答案很可能是无解的，然而还是希望大家给点建议。</p>
+<p>最后引用嘉烁的话，青春转场不散场，流年似水人依旧。愿来日多联系。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;em&gt;本文为最后一次例会的发言稿&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;首先，很荣幸能以 15 届学习部成员的身份在此发言。刚上大学，家人因为嫌我沉默寡言，劝我加入学生会，姐夫以前就是学习部的，就让我加入学习部，最终我也侥幸加入了学习部。经过一年，我虽然没变得与任何人都谈得来，但知道有
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>解决 Hash Sum mismatch 错误</title>
+    <link href="https://blog.dgeibi.xyz/2015/12/02/fix-apt-hash/"/>
+    <id>https://blog.dgeibi.xyz/2015/12/02/fix-apt-hash/</id>
+    <published>2015-12-02T06:00:40.000Z</published>
+    <updated>2017-01-10T09:23:34.470Z</updated>
+    
+    <content type="html"><![CDATA[<p>清除缓存 <code>sudo apt-get clean</code></p>
+<p>使用 HTTPS 的软件源：修改 <code>/etc/apt/sources.list</code> 中的网址成</p>
+<p><code>https://mirrors.ustc.edu.cn/ubuntu</code>，执行 <code>sudo apt-get update</code></p>
+<p>也可以使用代理</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">sudo apt-get -o Acquire::http::proxy=<span class="string">'http://yourproxyaddress:proxyport/'</span> update</div></pre></td></tr></table></figure>
+<p>或者</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">sudo vim /etc/apt/apt.conf</div><div class="line">-----</div><div class="line">Acquire::http::Proxy <span class="string">"http://yourproxyaddress:proxyport"</span>;</div><div class="line">-----</div><div class="line">sudo apt-get update</div></pre></td></tr></table></figure>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;清除缓存 &lt;code&gt;sudo apt-get clean&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;使用 HTTPS 的软件源：修改 &lt;code&gt;/etc/apt/sources.list&lt;/code&gt; 中的网址成&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;https://mirrors.ustc.e
+    
+    </summary>
+    
+    
+      <category term="Linux" scheme="https://blog.dgeibi.xyz/archives/tags/linux/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>设置终端下的代理</title>
+    <link href="https://blog.dgeibi.xyz/2015/11/25/terminal-proxy/"/>
+    <id>https://blog.dgeibi.xyz/2015/11/25/terminal-proxy/</id>
+    <published>2015-11-25T05:33:40.000Z</published>
+    <updated>2017-01-10T09:21:11.510Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="http://segmentfault.com/q/1010000000118837/a-1020000000132541" target="_blank" rel="external">如何为 Git 设置代理？</a></li>
+<li><a href="https://wiki.archlinux.org/index.php/Proxy_settings" target="_blank" rel="external">Proxy settings - ArchWiki</a></li>
+<li><a href="http://manpages.ubuntu.com/manpages/natty/man1/connect-proxy.1.html" target="_blank" rel="external">connect-proxy manpages</a></li>
+<li><a href="https://wiki.archlinux.org/index.php/HTTP_tunneling" target="_blank" rel="external">HTTP tunneling - ArchWiki</a></li>
+</ul>
+<h2 id="安装-Connect"><a href="#安装-Connect" class="headerlink" title="安装 Connect"></a>安装 <a href="https://bitbucket.org/gotoh/connect/wiki/Home" target="_blank" rel="external">Connect</a></h2><figure class="highlight sh"><table><tr><td class="code"><pre><div class="line"><span class="comment">#ubuntu</span></div><div class="line">sudo apt-get install connect-proxy</div><div class="line"><span class="comment">#archlinux</span></div><div class="line">yaourt -S connect <span class="comment"># https://aur.archlinux.org/packages/connect</span></div></pre></td></tr></table></figure>
+<h2 id="HTTP-的配置"><a href="#HTTP-的配置" class="headerlink" title="HTTP 的配置"></a>HTTP 的配置</h2><figure class="highlight sh"><table><tr><td class="code"><pre><div class="line">vi ~/.bashrc</div><div class="line"><span class="comment">#添加以下内容</span></div><div class="line"><span class="built_in">export</span> http_proxy=http://127.0.0.1:7070/</div><div class="line"><span class="built_in">export</span> https_proxy=<span class="variable">$http_proxy</span></div><div class="line"><span class="built_in">export</span> ftp_proxy=<span class="variable">$http_proxy</span></div></pre></td></tr></table></figure>
+<h2 id="git-协议的配置"><a href="#git-协议的配置" class="headerlink" title="git 协议的配置"></a>git 协议的配置</h2><figure class="highlight sh"><table><tr><td class="code"><pre><div class="line">sudo vi /usr/bin/gitproxy.sh</div><div class="line">-----</div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line">connect -H 127.0.0.1:7070 $*</div></pre></td></tr></table></figure>
+<p><code>-H</code> 表示 HTTP，将 <code>-H</code> 改成 <code>-S</code> 可以用 SOCKS5 协议</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><div class="line">sudo chmod +x /usr/bin/gitproxy.sh</div><div class="line">git config --global core.gitproxy <span class="string">'gitproxy.sh for kernel.org'</span></div></pre></td></tr></table></figure>
+<p><code>for kernel.org</code> 表示只有那个域名需要代理，当然可以不加 <code>for *</code></p>
+<h2 id="SSH-的配置"><a href="#SSH-的配置" class="headerlink" title="SSH 的配置"></a>SSH 的配置</h2><figure class="highlight sh"><table><tr><td class="code"><pre><div class="line">vi ~/.ssh/config</div><div class="line">-----</div><div class="line"><span class="comment">##not using proxy on lan</span></div><div class="line"><span class="comment">#Host 192.*</span></div><div class="line"><span class="comment">#    ProxyCommand connect-proxy %h %p</span></div><div class="line">Host github.com</div><div class="line">    User git</div><div class="line">    ProxyCommand connect -H 127.0.0.1:7070 %h %p</div></pre></td></tr></table></figure>
+<p>除了 Connect 还有很多其他的选择，如 corscrew (仅支持 HTTP 代理)</p>
+<p>将下列命令替换到上述相应位置即可</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><div class="line"><span class="comment">#git</span></div><div class="line">corkscrew 127.0.0.1 7070 $*</div><div class="line"><span class="comment">#SSH</span></div><div class="line">ProxyCommand corkscrew 127.0.0.1 7070 %h %p</div></pre></td></tr></table></figure>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;参考&quot;&gt;&lt;a href=&quot;#参考&quot; class=&quot;headerlink&quot; title=&quot;参考&quot;&gt;&lt;/a&gt;参考&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http://segmentfault.com/q/1010000000118837/a-1020000000
+    
+    </summary>
+    
+    
+      <category term="Linux" scheme="https://blog.dgeibi.xyz/archives/tags/linux/"/>
+    
+      <category term="网络" scheme="https://blog.dgeibi.xyz/archives/tags/network/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>OpenWrt + iNode</title>
+    <link href="https://blog.dgeibi.xyz/2015/11/19/openwrt-h3c/"/>
+    <id>https://blog.dgeibi.xyz/2015/11/19/openwrt-h3c/</id>
+    <published>2015-11-19T15:59:55.000Z</published>
+    <updated>2017-01-11T07:12:04.829Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://wiki.openwrt.org/doc/howto/buildroot.exigence" target="_blank" rel="external">OpenWrt build system – Installation</a></li>
+<li><a href="http://young523.com/?p=102" target="_blank" rel="external">自己编译集成了 shadowsocks 的 openwrt 固件</a></li>
+<li><a href="http://www.7forz.com/1973/" target="_blank" rel="external">【详细教程】编译 openwrt + njit-client 1.3，通过 iNode 认证</a></li>
+<li><a href="https://github.com/wongsyrone/LinuxNotes/blob/master/06.md" target="_blank" rel="external">LinuxNotes/06.md at master · wongsyrone/LinuxNotes</a></li>
+</ul>
+<h2 id="选购路由器"><a href="#选购路由器" class="headerlink" title="选购路由器"></a>选购路由器</h2><p>配置挺高，实惠的 Newifi Mini 受 OpenWrt 官方支持，可参照 <a href="https://linuxtoy.org/archives/install-openwrt-on-newifi-mini.html" target="_blank" rel="external">Newifi Mini 安装 OpenWrt</a> 刷入固件</p>
+<p>注：刷 OpenWrt 的最低配置是 4MB Flash、32MB RAM</p>
+<h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><h3 id="安装编译工具的依赖"><a href="#安装编译工具的依赖" class="headerlink" title="安装编译工具的依赖"></a>安装编译工具的依赖</h3><p>假定使用 Ubuntu 编译，操作过程中可能遇到网络问题，可参考以下解决方案</p>
+<ul>
+<li><a href="/2015/11/25/terminal-proxy/">设置终端下的代理</a></li>
+<li><a href="/2015/12/02/fix-apt-hash/">解决 Hash Sum mismatch 错误</a></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">sudo apt-get update</div><div class="line">sudo apt-get install build-essential subversion libncurses5-dev zlib1g-dev gawk gcc-multilib flex git-core gettext libssl-dev</div></pre></td></tr></table></figure>
+<h3 id="获取-OpenWrt-LEDE-代码树"><a href="#获取-OpenWrt-LEDE-代码树" class="headerlink" title="获取 OpenWrt/LEDE 代码树"></a>获取 OpenWrt/LEDE 代码树</h3><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line"><span class="comment">#开发版 (trunk)</span></div><div class="line">git <span class="built_in">clone</span> -b master --single-branch https://github.com/openwrt/openwrt.git</div><div class="line"><span class="comment">#或稳定版（如 Chaos Calmer）</span></div><div class="line">git <span class="built_in">clone</span> -b chaos_calmer --single-branch https://github.com/openwrt/openwrt.git</div><div class="line"><span class="comment">#或 LEDE</span></div><div class="line">git <span class="built_in">clone</span> https://git.lede-project.org/source.git lede</div></pre></td></tr></table></figure>
+<h3 id="更新和安装-feeds"><a href="#更新和安装-feeds" class="headerlink" title="更新和安装 feeds"></a>更新和安装 feeds</h3><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line"><span class="built_in">cd</span> openwrt <span class="comment">#或 cd lede</span></div><div class="line">./scripts/feeds update <span class="_">-a</span></div><div class="line">./scripts/feeds install <span class="_">-a</span></div></pre></td></tr></table></figure>
+<h3 id="获取-gduth3c-源码"><a href="#获取-gduth3c-源码" class="headerlink" title="获取 gduth3c 源码"></a>获取 <a href="https://github.com/hazytint/gduth3c" target="_blank" rel="external">gduth3c</a> 源码</h3><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">git <span class="built_in">clone</span> https://github.com/hazytint/gduth3c.git package/gduth3c</div><div class="line">git <span class="built_in">clone</span> https://github.com/dgeibi/luci-app-gduth3c.git package/luci-app-gduth3c</div></pre></td></tr></table></figure>
+<p>gduth3c 是主要程序，用于通过校园网的识别；luci-app-gduth3c 用于保存账号、密码，开机启动 gduth3c。</p>
+<p>gduth3c 适用于广工以前使用的 iNode。</p>
+<h3 id="配置编译信息"><a href="#配置编译信息" class="headerlink" title="配置编译信息"></a>配置编译信息</h3><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">make menuconfig</div></pre></td></tr></table></figure>
+<p>进入定制界面</p>
+<p>操作规则：</p>
+<ul>
+<li>/ 搜索</li>
+<li>方向键 移动光标</li>
+<li>回车键 确认</li>
+<li>空格键 切换 M  *</li>
+<li><code>&lt;M&gt;</code> 表示编译成 ipk，不集成在固件里，可以用 OPKG 软件包管理器进行安装</li>
+<li><code>&lt;*&gt;</code> 表示集成在固件中。</li>
+</ul>
+<p>配置示例：</p>
+<ol>
+<li>Target System –&gt; AR71xx/AR9xxx        \\ 选择 CPU 型号</li>
+<li>Target Profile –&gt; GL-iNet          \\ 选择路由器型号</li>
+<li>LuCI –&gt; Collections –&gt; &lt;*&gt; luci        \\ 添加 LuCI 网页界面</li>
+<li>LuCI –&gt; (Moudles) –&gt; Translations –&gt; &lt;*&gt; Chinese        \\ 添加中文支持</li>
+<li>Kernel modules –&gt; Native Language Support –&gt; &lt;*&gt; kmod-nls-utf8        \\ 添加 UTF8 编码</li>
+<li>Utilities –&gt; &lt;*&gt;gduth3c</li>
+<li>LuCI -&gt; Applications -&gt; &lt;*&gt;luci-app-gduth3c</li>
+<li>…</li>
+<li>Exit –&gt; Yes         \\ 退出并保存</li>
+</ol>
+<h3 id="开始编译"><a href="#开始编译" class="headerlink" title="开始编译"></a>开始编译</h3><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">make V=s  <span class="comment">#编译固件</span></div></pre></td></tr></table></figure>
+<p>路由器固件在 <code>bin/ar71xx/</code></p>
+<p>ipk 文件在 <code>bin/ar71xx/packages/</code></p>
+<h2 id="设置、安装-ipk"><a href="#设置、安装-ipk" class="headerlink" title="设置、安装 ipk"></a>设置、安装 ipk</h2><p>利用编译好的 bin 刷机 (可选)</p>
+<p>接通电源，用网线连通路由器 LAN 端口和电脑。</p>
+<p>打开 192.168.1.1</p>
+<ol>
+<li>系统 –&gt; 管理权 –&gt; 填入主机密码。</li>
+<li>网络 –&gt; 接口 –&gt; WAN –&gt; 修改 –&gt; 高级设置 –&gt; 克隆 MAC 地址（填入电脑网卡的 MAC 地址）</li>
+</ol>
+<p>这里有 <a href="http://aruljohn.com/mac/D864C75EF1C6" target="_blank" rel="external">查看电脑 MAC 地址的方法</a>。</p>
+<p>Windows 下推荐使用 <a href="https://git-scm.com/" target="_blank" rel="external">Git for Windows</a> 的 Git Bash 进行以下操作。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">scp gduth3c_1.0-1_ar71xx.ipk luci-app-gduth3c_1.0-1_all.ipk root@192.168.5.1:/tmp  <span class="comment">#将文件传到路由器的 / tmp 目录，如果固件自带跳过</span></div><div class="line">ssh root@192.168.1.1 <span class="comment">#登录 ssh</span></div><div class="line">opkg install /tmp/gduth3c_1.0-1_ar71xx.ipk <span class="comment">#如果固件自带跳过</span></div><div class="line">opkg install /tmp/luci-app-gduth3c_1.0-1_all.ipk <span class="comment">#如果固件自带跳过</span></div><div class="line">gduth3c -u [username] -p [password] -i [interface] <span class="comment">#测试能否通过校园网认证</span></div></pre></td></tr></table></figure>
+<p>[interface] 是物理接口，一般是 eth0，要对应你的 WAN 口，在 <code>网络 -&gt; 接口</code> 里就可以查看。</p>
+<p>测试通过，则在 192.168.1.1 的 <code>网络 --&gt; gduth3c</code> 勾选启用，输入校园网账号、密码，保存并应用。</p>
+<h2 id="另一个-GDUT-专用的认证软件"><a href="#另一个-GDUT-专用的认证软件" class="headerlink" title="另一个 GDUT 专用的认证软件"></a>另一个 GDUT 专用的认证软件</h2><p><a href="https://github.com/hazytint/gdut8021xclient" target="_blank" rel="external">gdut8021xclient</a></p>
+<p>编译 <code>gdut8021xclient</code> 时需先把 clone 得到的文件夹改名为 <code>njit8021xclient</code></p>
+<p>还要将根目录里的 <code>Makefile_OpenWrt</code> 改为 <code>Makefile</code>，<code>make menuconfig</code> 后在 <code>Network</code> 里选择。</p>
+<h2 id="编译成果"><a href="#编译成果" class="headerlink" title="编译成果"></a>编译成果</h2><p>Built for Chaos Calmer 15.05</p>
+<ul>
+<li><a href="/assets/files/gduth3c_1.0-1_ar71xx.ipk">gduth3c_1.0-1_ar71xx.ipk</a></li>
+<li><a href="/assets/files/luci-app-gduth3c_1.0-1_all.ipk">luci-app-gduth3c_1.0-1_all.ipk</a></li>
+<li><a href="/assets/files/libpcap_1.5.3-1_ar71xx.ipk">libpcap_1.5.3-1_ar71xx.ipk</a></li>
+<li><a href="/assets/files/njit8021xclient_1.3-testing_ar71xx.ipk">njit8021xclient_1.3-testing_ar71xx.ipk</a></li>
+<li><a href="/assets/files/luci-app-njitclient_1.0-1_all.ipk">luci-app-njitclient_1.0-1_all.ipk</a></li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;参考&quot;&gt;&lt;a href=&quot;#参考&quot; class=&quot;headerlink&quot; title=&quot;参考&quot;&gt;&lt;/a&gt;参考&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://wiki.openwrt.org/doc/howto/buildroot.exigence&quot; 
+    
+    </summary>
+    
+    
+      <category term="OpenWrt" scheme="https://blog.dgeibi.xyz/archives/tags/openwrt/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>硬盘干净安装 Windows</title>
+    <link href="https://blog.dgeibi.xyz/2015/08/05/install-windows/"/>
+    <id>https://blog.dgeibi.xyz/2015/08/05/install-windows/</id>
+    <published>2015-08-05T08:38:38.000Z</published>
+    <updated>2017-01-11T07:10:22.029Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="备份-C-盘的重要文件"><a href="#备份-C-盘的重要文件" class="headerlink" title="备份 C 盘的重要文件"></a>备份 C 盘的重要文件</h2><p>重要文件：文档、代码等舍不得删的东西。</p>
+<p><code>Program Files</code> 里的文件不用备份啊，最多备份安装程序或者绿色软件及可以确定的程序数据。</p>
+<h2 id="确定系统的启动方式"><a href="#确定系统的启动方式" class="headerlink" title="确定系统的启动方式"></a>确定系统的启动方式</h2><p>按 Win+R 打开运行，输入 <code>msinfo32</code>，回车查看系统信息。在 “BIOS 模式” 中如果显示 “传统”，表示系统启动方式为 Legacy BIOS；如果显示 “UEFI”，则系统启动方式为 UEFI。</p>
+<p>注：此方法适用于 Win8 及更高版本系统。</p>
+<p>其它方法见 <a href="http://wap.ithome.com/html/146588.htm" target="_blank" rel="external">UEFI 还是 Legacy BIOS？如何确定 Windows 启动类型</a></p>
+<h2 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h2><p>已通过微软官方渠道升级到 Win10 并确保激活的用户，可以免密钥安装相同版本的 Win10，联网可自动激活，所以要下载相同版本的 Win10 镜像。</p>
+<blockquote>
+<p>查看已安装 Win10 的版本</p>
+<ol>
+<li>鼠标右键点击 “开始按钮” 或者按 Win+X 快捷键。</li>
+<li>点击 “系统”。</li>
+<li>Windows 版本处即为当前 Win10 的版本。</li>
+</ol>
+</blockquote>
+<p>Win10 主要有家庭版、专业版、家庭中文版，“Windows 10 家庭中文版” 和 “Windows 10 家庭版” 是不同版本。</p>
+<p>下载 Windows 10 光盘映像：<a href="https://www.microsoft.com/zh-cn/software-download/windows10ISO/" target="_blank" rel="external">https://www.microsoft.com/zh-cn/software-download/windows10ISO/</a></p>
+<p>也可以在 <a href="http://msdn.itellyou.cn/" target="_blank" rel="external">MSDN，我告诉你</a> 获取其它系统的下载地址。</p>
+<p>如果系统启动方式为 Legacy BIOS，就需要下载、安装 <a href="https://pan.baidu.com/s/1hsmEhSS" target="_blank" rel="external">EasyBCD</a>。</p>
+<h2 id="解压镜像文件"><a href="#解压镜像文件" class="headerlink" title="解压镜像文件"></a>解压镜像文件</h2><h3 id="启动方式为-Legacy-BIOS"><a href="#启动方式为-Legacy-BIOS" class="headerlink" title="启动方式为 Legacy BIOS"></a>启动方式为 Legacy BIOS</h3><p>将准备好的系统镜像解压至一非系统分区 (非 C 盘) 的 <strong><a href="http://baike.sogou.com/v305005.htm?fromTitle=%E6%A0%B9%E7%9B%AE%E5%BD%95" target="_blank" rel="external">根目录</a></strong></p>
+<ol>
+<li>打开 EasyBCD。</li>
+<li>点击 “添加新条目”。</li>
+<li>点击 “WinPE”<ul>
+<li>类型：WIM 映像</li>
+<li>名称：随意</li>
+<li>路径： 选择之前解压得到的目录的 <code>sources\boot.win</code></li>
+</ul>
+</li>
+<li>点击 “添加条目”。</li>
+<li>重启电脑，开机阶段，选择刚刚随意填的条目。</li>
+</ol>
+<p><img src="/assets/images/install-windows/easybcd.png" alt=""></p>
+<h3 id="启动方式为-UEFI"><a href="#启动方式为-UEFI" class="headerlink" title="启动方式为 UEFI"></a>启动方式为 UEFI</h3><ol>
+<li>用鼠标右键点击 “开始按钮” 或者按 Win+X 快捷键。</li>
+<li>点击 “磁盘管理”。</li>
+<li>用鼠标右键点击可用空间较大的卷，点击压缩卷。 <img src="/assets/images/install-windows/1.png" alt=""></li>
+<li>输入压缩空间：5000，一般够用，点击压缩。 <img src="/assets/images/install-windows/2.png" alt=""></li>
+<li>压缩完成后，可看到未分配的空间，用鼠标右键点击 “未分配的空间”，点击 “新建简单卷”。 <img src="/assets/images/install-windows/3.png" alt=""></li>
+<li>接连三次点击 “下一步”。</li>
+<li>将文件系统选为 “FAT32”，卷标设为空，点击 “下一步”。 <img src="/assets/images/install-windows/4.png" alt=""></li>
+<li>点击 “完成”。</li>
+<li>将系统镜像解压至刚刚创建的 FAT32 卷的 <strong><a href="http://baike.sogou.com/v305005.htm?fromTitle=%E6%A0%B9%E7%9B%AE%E5%BD%95" target="_blank" rel="external">根目录</a></strong>。</li>
+<li>重启电脑，在开机阶段前进 BIOS 或者启动项管理，可能需要连续按 ESC 或者 F12 键，具体品牌的具体操作请自行搜索。</li>
+<li>用方向键和回车键选择新增的启动项（名字可能为硬盘的型号）。</li>
+</ol>
+<h2 id="安装阶段"><a href="#安装阶段" class="headerlink" title="安装阶段"></a>安装阶段</h2><p>开始安装</p>
+<p><img src="/assets/images/install-windows/05.jpg" alt=""></p>
+<p><img src="/assets/images/install-windows/06.jpg" alt=""></p>
+<p>▲语言、区域和输入法设置，中国用户使用默认即可，点击 “下一步” 继续。</p>
+<p><img src="/assets/images/install-windows/07.jpg" alt=""></p>
+<p>▲点击 “现在安装”。</p>
+<p><img src="/assets/images/install-windows/08.jpg" alt=""></p>
+<p>▲安装密钥：</p>
+<p>WIN10：点击 “没有安装密钥”；之后有可能需要选择要安装的版本。</p>
+<p>WIN8.1：XHQ8N-C3MCJ-RQXB6-WCHYG-C9WKB (专业版)</p>
+<p><img src="/assets/images/install-windows/09.jpg" alt=""></p>
+<p>▲勾选 “我接受许可条款” 后，点击 “下一步” 继续。</p>
+<p><img src="/assets/images/install-windows/10.jpg" alt=""></p>
+<p>▲由于我们目前执行纯净安装，因此要选择第二项 “自定义” 安装方式。</p>
+<p><img src="/assets/images/install-windows/11.jpg" alt=""></p>
+<p>▲将当前系统卷（根据大小判断）格式化，并选择这个分区，然后点击 “下一步” 即可。</p>
+<p><img src="/assets/images/install-windows/12.jpg" alt=""></p>
+<p>▲此后，Windows 安装程序要至少重启两次，耐心等待 30 分钟左右将进入后续设置。后续设置很简单，这里就跳过了。</p>
+<h2 id="激活"><a href="#激活" class="headerlink" title="激活"></a>激活</h2><p>注：激活过程保持联网</p>
+<p>鼠标右键点击 “开始按钮” 或者按 Win+X 快捷键，选择 “命令提示符（管理员）”</p>
+<p>输入如下命令</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">slmgr /upk</div><div class="line">slmgr /ipk XXXXX-XXXXX-XXXXX-XXXXX-XXXXX</div></pre></td></tr></table></figure>
+<p>注：XXXXX-XXXXX-XXXXX-XXXXX-XXXXX 是你购买的正版密钥。</p>
+<p>稍等片刻，你可以在 “系统”(按 Win+X 快捷键，选择 “系统”）中发现 “Windows 已激活”。</p>
+<h2 id="更新驱动"><a href="#更新驱动" class="headerlink" title="更新驱动"></a>更新驱动</h2><p>刚装完系统，Windows 一般会自动更新驱动等。</p>
+<p>系统更新完并重启之后，按 Win+X 快捷键，选择 “设备管理器”，如果没有感叹号，说明驱动都正常工作了，若有就右键有黄色感叹号的项目，进行联网更新。</p>
+<p>感叹号没消失，一般可以去找设备的官网按型号、系统下驱动。</p>
+<p>再不行就装“驱动精灵”，“鲁大师”等，有开机黑屏的风险哦！</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;备份-C-盘的重要文件&quot;&gt;&lt;a href=&quot;#备份-C-盘的重要文件&quot; class=&quot;headerlink&quot; title=&quot;备份 C 盘的重要文件&quot;&gt;&lt;/a&gt;备份 C 盘的重要文件&lt;/h2&gt;&lt;p&gt;重要文件：文档、代码等舍不得删的东西。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;P
+    
+    </summary>
+    
+    
+      <category term="Windows" scheme="https://blog.dgeibi.xyz/archives/tags/windows/"/>
+    
+  </entry>
+  
+</feed>
