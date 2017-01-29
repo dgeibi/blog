@@ -25,9 +25,6 @@
     "doc": "docs"
   },
   "devDependencies": {},
-  "scripts": {
-    "start": "hexo clean;hexo g"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dgeibi/blog.dgeibi.xyz.git"
