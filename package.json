@@ -1,6 +1,6 @@
 {
-  "name": "hexo-site",
-  "version": "0.0.0",
+  "name": "blog",
+  "version": "0.0.1",
   "private": true,
   "hexo": {
     "version": "3.2.2"
@@ -18,5 +18,27 @@
     "hexo-renderer-marked": "^0.2.11",
     "hexo-server": "^0.2.0",
     "hexo-uglify": "0.0.3"
-  }
+  },
+  "description": "blog.dgeibi.xyz",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "hexo clean;hexo g"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dgeibi/blog.dgeibi.xyz.git"
+  },
+  "keywords": [
+    "blog"
+  ],
+  "author": "dgeibi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dgeibi/blog.dgeibi.xyz/issues"
+  },
+  "homepage": "https://github.com/dgeibi/blog.dgeibi.xyz#readme"
 }

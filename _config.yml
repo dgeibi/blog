@@ -82,6 +82,7 @@ uglify:
   compress: true
   exclude: 
     - svg4everybody.js
+    - sw.js
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
