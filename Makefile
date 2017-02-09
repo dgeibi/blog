@@ -4,7 +4,7 @@ push:
 	git push
 
 theme:
-	cd ./themes/plain && gulp && git add -A && git commit
+	cd ./themes/plain && gulp && git add -A && git commit && git push
 
 g:
 	cd ./themes/plain && gulp
@@ -14,4 +14,4 @@ deploy: g
 	firebase deploy --only hosting
 
 s: g
-	firebase serve
+	hexo s

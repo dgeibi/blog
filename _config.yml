@@ -76,14 +76,6 @@ marked:
   smartLists: true
   smartypants: true
 
-uglify:
-  mangle: true
-  output: true
-  compress: true
-  exclude: 
-    - svg4everybody.js
-    - sw.js
-
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
