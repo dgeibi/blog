@@ -7,6 +7,7 @@ theme:
 	cd ./themes/plain && gulp && git add -A && git commit
 
 g:
+	cd ./themes/plain && gulp
 	hexo clean && hexo g
 
 deploy: g
