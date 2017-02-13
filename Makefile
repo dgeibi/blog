@@ -1,3 +1,5 @@
+default: theme deploy push
+
 push:
 	git add -A
 	git commit -m "update at `date`"
