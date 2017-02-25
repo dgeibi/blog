@@ -14,5 +14,5 @@ g:
 deploy: g
 	firebase deploy --only hosting
 
-s: g
-	hexo s
+s:
+	gulp

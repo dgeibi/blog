@@ -14,8 +14,8 @@
     "hexo-generator-sitemap": "^1.1.2",
     "hexo-generator-tag": "^0.2.0",
     "hexo-render-pug": "^1.1.0",
-    "hexo-render-sass": "^1.0.0",
     "hexo-renderer-marked": "^0.2.11",
+    "hexo-renderer-sass": "^0.2.0",
     "hexo-server": "^0.2.0"
   },
   "description": "blog.dgeibi.xyz",
@@ -23,7 +23,6 @@
   "directories": {
     "doc": "docs"
   },
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dgeibi/blog.dgeibi.xyz.git"
@@ -36,5 +35,9 @@
   "bugs": {
     "url": "https://github.com/dgeibi/blog.dgeibi.xyz/issues"
   },
-  "homepage": "https://github.com/dgeibi/blog.dgeibi.xyz#readme"
+  "homepage": "https://github.com/dgeibi/blog.dgeibi.xyz#readme",
+  "devDependencies": {
+    "cli-color": "^1.2.0",
+    "gulp": "^3.9.1"
+  }
 }
