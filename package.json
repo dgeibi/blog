@@ -39,7 +39,8 @@
   "devDependencies": {},
   "scripts": {
     "start": "gulp",
-    "theme": "cd ./themes/plain && gulp && git add -A && git commit && git push",
-    "deploy": "gulp deploy"
+    "push": "gulp push",
+    "deploy": "gulp deploy",
+    "theme": "cd ./themes/plain && gulp && git add -A && git commit && git push"
   }
 }
