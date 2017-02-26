@@ -1,42 +1,65 @@
-var gulp = require('gulp'),
+const gulp = require('gulp'),
     child_process = require('child_process'),
     clc = require('cli-color'),
-    generate
-
-const error = clc.red.bold,
+    liveServer = require("live-server"),
+    sass = require('gulp-sass'),
+    sassFiles = './themes/plain/source/css/**/*.scss',
+    err = clc.red.bold,
     notice = clc.blue
 
-gulp.task('default', ['watch', 'build', 'serve'])
+gulp.task('default', ['sass', 'sass:watch', 'build', 'serve'])
 
 gulp.task('build', function () {
-    if (generate) generate.kill()
-    const clean = child_process.spawnSync('hexo', ['clean'])
-    console.log(clean.stdout.toString())
-    generate = child_process.spawn('hexo', ['generate', '--watch'])
-    generate.stdout.on('data', data => {
-        console.log(`${data}`)
-    })
-    generate.stderr.on('data', data => {
-        console.log(error(`${data}`))
-    })
+    shell('hexo generate --watch')
 })
 
-gulp.task('watch', function () {
-    gulp.watch('./themes/plain/source/css/**/*.scss', ['build'])
+gulp.task('sass:watch', function () {
+    gulp.watch(sassFiles, ['sass'])
+})
+
+gulp.task('sass', function () {
+    return gulp.src(sassFiles)
+        .pipe(sass.sync().on('error', sass.logError))
+        .pipe(gulp.dest('./public/css'));
 })
 
 gulp.task('serve', function () {
-    const server = child_process.spawn('firebase', ['serve'])
-
-    server.stdout.on('data', data => {
-        console.log(`${data}`)
-    })
-
-    server.stderr.on('data', data => {
-        console.log(error(`${data}`))
-    })
-
-    server.on('close', code => {
-        console.log(notice(`child process exited with code ${code}`))
-    })
+    const params = {
+        port: 4000,
+        root: "public",
+        logLevel: 2,
+    };
+    liveServer.start(params);
 })
+
+gulp.task('generate', function () {
+    shellSync(`hexo clean && hexo g`)
+})
+
+gulp.task('deploy', ['generate'], function () {
+    shell(`firebase deploy --only hosting`)
+})
+
+gulp.task('push', function () {
+    shellSync("git add -A && git commit -m \"update at `date`\" && git push")
+})
+
+function shell(cmd = '') {
+    const proc = child_process.exec(cmd, (error, stdout, stderr) => {
+        if (error) {
+            console.error(notice(`${error}`));
+            return;
+        }
+        console.log(`${stdout}`)
+        console.log(err(`${stderr}`))
+    })
+    return proc
+}
+
+function shellSync(cmd = '') {
+    try {
+        console.log(child_process.execSync(cmd).toString())
+    } catch (e) {
+        console.log(err(e.stderr.toString()))
+    }
+}
