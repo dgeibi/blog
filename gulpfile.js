@@ -3,18 +3,28 @@ const gulp = require('gulp'),
     clc = require('cli-color'),
     liveServer = require("live-server"),
     sass = require('gulp-sass'),
-    sassFiles = './themes/plain/source/css/**/*.scss',
+    themeSrc = './themes/plain/source',
+    sassFiles = `${themeSrc}/css/**/*.scss`,
+    jsFiles = [`${themeSrc}/js/_Util.js`, `${themeSrc}/js/_core.js`],
+    concat = require('gulp-concat'),
     err = clc.red.bold,
     notice = clc.blue
 
-gulp.task('default', ['sass', 'sass:watch', 'build', 'serve'])
+gulp.task('default', ['sass', 'js', 'watch', 'build', 'serve'])
 
 gulp.task('build', function () {
     shell('hexo generate --watch')
 })
 
-gulp.task('sass:watch', function () {
+gulp.task('watch', function () {
     gulp.watch(sassFiles, ['sass'])
+    gulp.watch(jsFiles, ['js'])
+})
+
+gulp.task("js", function () {
+    return gulp.src(jsFiles)
+        .pipe(concat("main.js"))
+        .pipe(gulp.dest(`${themeSrc}/js`));
 })
 
 gulp.task('sass', function () {
