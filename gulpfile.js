@@ -42,7 +42,7 @@ gulp.task('serve', function () {
     liveServer.start(params);
 })
 
-gulp.task('generate', function () {
+gulp.task('generate', ['js'], function () {
     shellSync(`hexo clean && hexo g`)
 })
 
