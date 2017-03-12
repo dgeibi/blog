@@ -22,7 +22,7 @@ module.exports = {
     "comma-dangle": [
       "error",
       {
-        "arrays": "always",
+        "arrays": "ignore",
         "objects": "always",
         "imports": "never",
         "exports": "never",

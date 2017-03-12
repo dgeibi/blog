@@ -1,66 +1,50 @@
-const gulp = require('gulp'),
-  child_process = require('child_process'),
-  clc = require('cli-color'),
-  liveServer = require("live-server"),
-  sass = require('gulp-sass'),
-  themeSrc = './themes/plain/source',
-  sassFiles = `${themeSrc}/css/**/*.scss`,
-  err = clc.red.bold,
-  notice = clc.blue
+const gulp = require('gulp')
+const liveServer = require('live-server')
+const sass = require('gulp-sass')
+const shell = require('./shell').shell
+const shellSync = require('./shell').shellSync
 
-gulp.task('default', ['sass', 'watch', 'build:watch', 'serve'])
+const themeSrc = './themes/plain/source'
+const sassFiles = `${themeSrc}/css/**/*.scss`
 
-gulp.task('build:watch', function () {
+gulp.task('default', [
+  'sass',
+  'watch',
+  'build:watch',
+  'serve',
+])
+
+gulp.task('build:watch', () => {
   shell('hexo generate --watch')
 })
 
-gulp.task('watch', function () {
+gulp.task('watch', () => {
   gulp.watch(sassFiles, ['sass'])
 })
 
-gulp.task('sass', function () {
-  return gulp.src(sassFiles)
+gulp.task('sass', () =>
+  gulp.src(sassFiles)
     .pipe(sass.sync().on('error', sass.logError))
     .pipe(gulp.dest('./public/css'))
-})
+)
 
-gulp.task('serve', function () {
+gulp.task('serve', () => {
   const params = {
     port: 4000,
-    root: "public",
+    root: 'public',
     logLevel: 2,
   }
   liveServer.start(params)
 })
 
-gulp.task('generate', function () {
-  shellSync(`hexo clean && hexo g`)
+gulp.task('generate', () => {
+  shellSync('hexo clean && hexo g')
 })
 
-gulp.task('deploy', ['generate'], function () {
-  shell(`firebase deploy --only hosting`)
+gulp.task('deploy', ['generate'], () => {
+  shell('firebase deploy --only hosting')
 })
 
-gulp.task('push', function () {
-  shellSync("git add -A && git commit -m \"update at `date`\" && git push")
+gulp.task('push', () => {
+  shellSync('git add -A && git commit -m "update at `date`" && git push')
 })
-
-function shell(cmd = '') {
-  const proc = child_process.exec(cmd, (error, stdout, stderr) => {
-    if (error) {
-      console.error(notice(`${error}`))
-      return
-    }
-    console.log(`${stdout}`)
-    console.log(err(`${stderr}`))
-  })
-  return proc
-}
-
-function shellSync(cmd = '') {
-  try {
-    console.log(child_process.execSync(cmd).toString())
-  } catch (e) {
-    console.log(err(e.stderr.toString()))
-  }
-}
