@@ -1,8 +1,7 @@
 const gulp = require('gulp')
 const liveServer = require('live-server')
 const sass = require('gulp-sass')
-const shell = require('./shell').shell
-const shellSync = require('./shell').shellSync
+const { shell, shellSync } = require('./shell')
 
 const themeSrc = './themes/plain/source'
 const sassFiles = `${themeSrc}/css/**/*.scss`
