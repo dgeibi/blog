@@ -41,7 +41,7 @@ gulp.task('generate', () => {
 })
 
 gulp.task('deploy', ['generate'], () => {
-  shell('firebase deploy --only hosting')
+  shell('firebase deploy')
 })
 
 gulp.task('push', () => {
