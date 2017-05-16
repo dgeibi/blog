@@ -64,5 +64,6 @@ db.json
 
 /public
 /docs
-/themes
+/themes/*
+!/themes/_config.yml
 .vscode

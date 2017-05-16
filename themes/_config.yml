@@ -1,0 +1,26 @@
+## 导航栏链接
+menu:
+  archives: "/archives/"
+  about: "/about/"
+  Feed: "/atom.xml"
+  Note: "https://note.dgeibi.xyz"
+
+## About
+twitter: dgeibi
+github: dgeibi
+email: png.inside@gmail.com
+
+## 用于生成 manifest.json
+manifest: true
+
+# chrome 手机端工具栏颜色
+theme_color: "#5A5A5A"
+
+# display: fullscreen	standalone minimal-ui browser
+display: "standalone"
+
+icons:
+- src: "/favicon.png"
+  sizes: "192x192"
+
+gentie_productKey: d4a4fdbe48344f9280e77ee6c6092ba1
