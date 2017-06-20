@@ -1,14 +1,9 @@
 const gulp = require('gulp');
 const liveServer = require('live-server');
-const sass = require('gulp-sass');
 
 const { shell, shellSync } = require('./utils/shell');
 
-const themeSrc = './themes/plain/source';
-const sassFiles = `${themeSrc}/css/**/*.scss`;
-
 gulp.task('default', [
-  'sass:watch',
   'hexo:watch',
   'serve',
 ]);
@@ -17,17 +12,7 @@ gulp.task('hexo:watch', () => {
   shell('hexo generate --watch');
 });
 
-gulp.task('sass:watch', ['sass'], () => {
-  gulp.watch(sassFiles, ['sass']);
-});
-
-gulp.task('sass', () =>
-  gulp.src(sassFiles)
-    .pipe(sass.sync().on('error', sass.logError))
-    .pipe(gulp.dest('./public/css'))
-);
-
-gulp.task('serve', ['sass:watch', 'hexo:watch'], () => {
+gulp.task('serve', ['hexo:watch'], () => {
   const params = {
     port: 4000,
     root: 'public',
