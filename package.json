@@ -3,10 +3,11 @@
   "version": "0.0.2",
   "private": true,
   "hexo": {
-    "version": "3.3.7"
+    "version": "3.5.0"
   },
   "dependencies": {
-    "gulp": "^3.9.1",
+    "cross-spawn": "^6.0.4",
+    "gulp": "^4.0.0",
     "hexo": "^3.3.7",
     "hexo-generator-archive": "^0.1.4",
     "hexo-generator-category": "^0.1.3",
@@ -34,20 +35,36 @@
   "homepage": "https://github.com/dgeibi/blog#readme",
   "main": "gulpfile.js",
   "devDependencies": {
-    "eslint": "^3.19.0",
-    "eslint-config-airbnb-base": "^11.1.3",
-    "eslint-config-dgeibi": "dgeibi/eslint-config-dgeibi",
-    "eslint-plugin-import": "^2.2.0",
-    "eslint-plugin-no-async-without-await": "^1.2.0"
+    "eslint": "^4.18.0",
+    "eslint-config-dgeibi": "^4.1.0",
+    "husky": "^0.14.3",
+    "lint-staged": "^7.0.0",
+    "prettier": "^1.10.2"
   },
   "scripts": {
-    "start": "gulp",
+    "start": "gulp serve",
+    "serve": "gulp serve",
     "push": "gulp push",
     "deploy": "gulp deploy",
+    "build": "gulp generate",
     "lint": "eslint .",
-    "link": "cd themes; mv plain bk; ln -s ../../plain plain; cp plain/_config.yml configbk; cp bk/_config.yml plain",
-    "unlink": "cd themes; mv configbk plain/_config.yml; rm plain; mv bk plain",
-    "update": "cd themes/plain; git reset --hard; git pull; cp ../_config.yml .",
-    "fix": "eslint . --fix"
+    "fix": "eslint . --fix",
+    "format": "prettier --write \"**/*.{js,md,json}\" \"**/.*rc\"",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint",
+      "prettier --write",
+      "git add"
+    ],
+    "*.{md,json}": [
+      "prettier --write",
+      "git add"
+    ],
+    ".*rc": [
+      "prettier --write",
+      "git add"
+    ]
   }
 }
