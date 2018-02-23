@@ -7,8 +7,8 @@ toc: true
 
 感谢：
 
-- [Image Generator (Image Builder) - EN [OpenWrt Wiki]](https://wiki.openwrt.org/doc/howto/obtain.firmware.generate)
-- [OpenWrt Downloads - 中科大镜像](http://openwrt.proxy.ustclug.org/)
+* [Image Generator (Image Builder) - EN [OpenWrt Wiki]](https://wiki.openwrt.org/doc/howto/obtain.firmware.generate)
+* [OpenWrt Downloads - 中科大镜像](http://openwrt.proxy.ustclug.org/)
 
 本文假定使用的路由器：GL-iNet 6416A v1，使用的 CPU：ar71xx/generic；OpenWrt：15.05.1；Drcom：5.2.1(p)。
 
@@ -51,7 +51,7 @@ yum group install "Development Tools"
 
 ## 修改 Makefile
 
-``` Makefile
+```Makefile
 	$(OPKG) update || true; \
 	fi
 	$(MAKE) package_install
@@ -84,7 +84,7 @@ files/
 
 可以用 `scp` 备份其它配置文件：
 
-``` bash
+```bash
 mkdir -p files/etc/config
 scp root@192.168.1.1:"/etc/config/network /etc/config/luci /etc/config/wireless /etc/config/firewall" files/etc/config/
 scp root@192.168.1.1:"/etc/sysupgrade.conf" files/etc/
@@ -96,17 +96,17 @@ scp root@192.168.1.1:"/etc/sysupgrade.conf" files/etc/
 
 语法：
 
-``` bash
+```bash
 make image PROFILE=XXX PACKAGES="pkg1 pkg2 pkg3 -pkg4 -pkg5 -pkg6" FILES=files/
 ```
 
-- PROFILE：含有要编译的型号的配置；通过执行 `make info`，查看可用的选项。
-- PACKAGES：要编译进固件的包
-- FILES：包含要添加到固件的文件的文件夹
+* PROFILE：含有要编译的型号的配置；通过执行 `make info`，查看可用的选项。
+* PACKAGES：要编译进固件的包
+* FILES：包含要添加到固件的文件的文件夹
 
 现在执行下面的命令的可以编译出自带 Drcom 的固件。
 
-``` bash
+```bash
 make image PROFILE="GLINET" PACKAGES="luci luci-i18n-base-zh-cn python-light python-logging python-openssl python-codecs" FILES=files/
 ```
 

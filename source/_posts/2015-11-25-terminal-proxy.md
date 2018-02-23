@@ -14,7 +14,7 @@ toc: true
 
 ## 安装 [Connect](https://bitbucket.org/gotoh/connect/wiki/Home)
 
-``` sh
+```sh
 #ubuntu
 sudo apt-get install connect-proxy
 #archlinux
@@ -23,7 +23,7 @@ yaourt -S connect # https://aur.archlinux.org/packages/connect
 
 ## HTTP 的配置
 
-``` sh
+```sh
 vi ~/.bashrc
 #添加以下内容
 export http_proxy=http://127.0.0.1:7070/
@@ -33,7 +33,7 @@ export ftp_proxy=$http_proxy
 
 ## git 协议的配置
 
-``` sh
+```sh
 sudo vi /usr/bin/gitproxy.sh
 -----
 #!/bin/bash
@@ -42,7 +42,7 @@ connect -H 127.0.0.1:7070 $*
 
 `-H` 表示 HTTP，将 `-H` 改成 `-S` 可以用 SOCKS5 协议
 
-``` sh
+```sh
 sudo chmod +x /usr/bin/gitproxy.sh
 git config --global core.gitproxy 'gitproxy.sh for kernel.org'
 ```
@@ -51,7 +51,7 @@ git config --global core.gitproxy 'gitproxy.sh for kernel.org'
 
 ## SSH 的配置
 
-``` sh
+```sh
 vi ~/.ssh/config
 -----
 ##not using proxy on lan
@@ -66,7 +66,7 @@ Host github.com
 
 将下列命令替换到上述相应位置即可
 
-``` sh
+```sh
 #git
 corkscrew 127.0.0.1 7070 $*
 #SSH

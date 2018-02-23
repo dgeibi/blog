@@ -12,13 +12,13 @@ date: 2015-12-02 14:00:40 +0800
 
 也可以使用代理
 
-``` bash
+```bash
 sudo apt-get -o Acquire::http::proxy='http://yourproxyaddress:proxyport/' update
 ```
 
 或者
 
-``` bash
+```bash
 sudo vim /etc/apt/apt.conf
 -----
 Acquire::http::Proxy "http://yourproxyaddress:proxyport";

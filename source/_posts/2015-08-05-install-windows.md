@@ -24,7 +24,7 @@ toc: true
 已通过微软官方渠道升级到 Win10 并确保激活的用户，可以免密钥安装相同版本的 Win10，联网可自动激活，所以要下载相同版本的 Win10 镜像。
 
 > 查看已安装 Win10 的版本
->
+
 1. 鼠标右键点击 “开始按钮” 或者按 Win+X 快捷键。
 2. 点击 “系统”。
 3. Windows 版本处即为当前 Win10 的版本。
@@ -46,9 +46,9 @@ Win10 主要有家庭版、专业版、家庭中文版，“Windows 10 家庭中
 1. 打开 EasyBCD。
 2. 点击 “添加新条目”。
 3. 点击 “WinPE”
-    * 类型：WIM 映像
-    * 名称：随意
-    * 路径： 选择之前解压得到的目录的 `sources\boot.win`
+   * 类型：WIM 映像
+   * 名称：随意
+   * 路径： 选择之前解压得到的目录的 `sources\boot.win`
 4. 点击 “添加条目”。
 5. 重启电脑，开机阶段，选择刚刚随意填的条目。
 
@@ -76,15 +76,15 @@ Win10 主要有家庭版、专业版、家庭中文版，“Windows 10 家庭中
 
 ![](/assets/images/install-windows/06.jpg)
 
-▲语言、区域和输入法设置，中国用户使用默认即可，点击 “下一步” 继续。
+▲ 语言、区域和输入法设置，中国用户使用默认即可，点击 “下一步” 继续。
 
 ![](/assets/images/install-windows/07.jpg)
 
-▲点击 “现在安装”。
+▲ 点击 “现在安装”。
 
 ![](/assets/images/install-windows/08.jpg)
 
-▲安装密钥：
+▲ 安装密钥：
 
 WIN10：点击 “没有安装密钥”；之后有可能需要选择要安装的版本。
 
@@ -92,19 +92,19 @@ WIN8.1：XHQ8N-C3MCJ-RQXB6-WCHYG-C9WKB (专业版)
 
 ![](/assets/images/install-windows/09.jpg)
 
-▲勾选 “我接受许可条款” 后，点击 “下一步” 继续。
+▲ 勾选 “我接受许可条款” 后，点击 “下一步” 继续。
 
 ![](/assets/images/install-windows/10.jpg)
 
-▲由于我们目前执行纯净安装，因此要选择第二项 “自定义” 安装方式。
+▲ 由于我们目前执行纯净安装，因此要选择第二项 “自定义” 安装方式。
 
 ![](/assets/images/install-windows/11.jpg)
 
-▲将当前系统卷（根据大小判断）格式化，并选择这个分区，然后点击 “下一步” 即可。
+▲ 将当前系统卷（根据大小判断）格式化，并选择这个分区，然后点击 “下一步” 即可。
 
 ![](/assets/images/install-windows/12.jpg)
 
-▲此后，Windows 安装程序要至少重启两次，耐心等待 30 分钟左右将进入后续设置。后续设置很简单，这里就跳过了。
+▲ 此后，Windows 安装程序要至少重启两次，耐心等待 30 分钟左右将进入后续设置。后续设置很简单，这里就跳过了。
 
 ## 激活
 
@@ -114,7 +114,7 @@ WIN8.1：XHQ8N-C3MCJ-RQXB6-WCHYG-C9WKB (专业版)
 
 输入如下命令
 
-``` batch
+```batch
 slmgr /upk
 slmgr /ipk XXXXX-XXXXX-XXXXX-XXXXX-XXXXX
 ```

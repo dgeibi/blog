@@ -49,7 +49,7 @@
     "build": "gulp generate",
     "lint": "eslint .",
     "fix": "eslint . --fix",
-    "format": "prettier --write \"**/*.{js,md,json}\" \"**/.*rc\"",
+    "format": "prettier --write \"**/*.{js,md,json}\"&& prettier --parser json --write \"**/.*rc\"",
     "precommit": "lint-staged"
   },
   "lint-staged": {
@@ -63,7 +63,7 @@
       "git add"
     ],
     ".*rc": [
-      "prettier --write",
+      "prettier --write --parser json",
       "git add"
     ]
   }
