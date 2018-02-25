@@ -8,50 +8,70 @@ const errorlogger = error => {
   console.log(error)
 }
 
-const buildHexo = () => run('hexo g')
+const buildHexo = opts => run('hexo g', opts)
 
-const buildTheme = () =>
-  run(`npm run -s build -- --env.dir=${path.resolve(__dirname, 'public/js')}`, {
+const buildProdTheme = () =>
+  run(`npm run -s build`, {
     cwd: path.join(__dirname, 'themes/plain'),
   })
 
-const watch = () =>
-  buildHexo().then(() => {
-    const watcher = gulp.watch([
-      `source/**/*`,
-      `themes/plain/layout/**/*`,
-      `themes/plain/src/**/*`,
-      `**/_config.yml`,
-      `themes/plain/**/.babelrc`,
-    ])
-    const handler = p => {
-      console.log(`${p} changed`)
-      if (
-        matchPath(p, ['source', 'themes/plain/layout']) ||
-        p.endsWith('_config.yml')
-      ) {
-        buildHexo().catch(errorlogger)
-      } else if (matchPath(p, 'themes/plain/src') || p.endsWith('.babelrc')) {
-        buildTheme().catch(errorlogger)
-      } else {
-        console.log('but nothing to do')
-      }
-    }
-    watcher.on('change', handler)
-    watcher.on('add', handler)
+const buildDevTheme = dir =>
+  run(`npm run -s build -- --env.dev ${dir ? `--env.dir=${dir}` : ''}`, {
+    cwd: path.join(__dirname, 'themes/plain'),
   })
 
-const serve = () =>
-  watch().then(() => {
-    liveServer.start({
-      port: 4000,
-      root: 'public',
-      logLevel: 2,
-    })
+const watch = async () => {
+  await buildDevTheme()
+  await buildHexo()
+
+  const devAssetsOutputPath = path.join(__dirname, 'public/assets')
+  const watcher = gulp.watch([
+    `source/**/*`,
+    `themes/plain/layout/**/*`,
+    `themes/plain/languages/**/*`,
+    `themes/plain/src/**/*`,
+    `**/_config.yml`,
+    `**/webpack.config.js`,
+    `themes/plain/**/.babelrc`,
+  ])
+  const handler = p => {
+    console.log(`${p} changed`)
+    if (
+      matchPath(p, [
+        'source',
+        'themes/plain/layout',
+        'themes/plain/languages',
+      ]) ||
+      p.endsWith('_config.yml')
+    ) {
+      buildHexo().catch(errorlogger)
+    } else if (
+      matchPath(p, 'themes/plain/src') ||
+      p.endsWith('.babelrc') ||
+      p.endsWith('webpack.config.js')
+    ) {
+      buildDevTheme(devAssetsOutputPath).catch(errorlogger)
+    } else {
+      console.log('but nothing to do')
+    }
+  }
+  watcher.on('change', handler)
+  watcher.on('add', handler)
+}
+
+const listen = () => {
+  liveServer.start({
+    port: 4000,
+    root: 'public',
+    logLevel: 2,
   })
+}
+
+const serve = () => watch().then(listen)
 
 const generate = async () => {
   await run('hexo clean')
+  await buildProdTheme()
   await run('hexo g')
 }
 
@@ -65,6 +85,7 @@ gulp.task('serve', serve)
 gulp.task('generate', generate)
 gulp.task('deploy', gulp.series(generate, deploy))
 gulp.task('push', push)
+gulp.task('serve:prod', gulp.series(generate, listen))
 
 function matchPath(a, b) {
   if (typeof b === 'string')
