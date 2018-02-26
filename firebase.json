@@ -33,29 +33,11 @@
         ]
       },
       {
-        "source": "offline.html",
+        "source": "assets/*.@(js,css)",
         "headers": [
           {
             "key": "Cache-Control",
-            "value": "max-age=604800"
-          }
-        ]
-      },
-      {
-        "source": "**/*.@(css)",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "max-age=86400"
-          }
-        ]
-      },
-      {
-        "source": "js/svg4everybody.js",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "max-age=604800"
+            "value": "max-age=31536000"
           }
         ]
       }
