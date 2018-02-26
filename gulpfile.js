@@ -1,6 +1,7 @@
 const gulp = require('gulp')
 const liveServer = require('live-server')
 const path = require('path')
+const hexo = require('./utils/hexo')
 
 const { shellSync, run } = require('./utils/shell')
 
@@ -8,7 +9,7 @@ const errorlogger = error => {
   console.log(error)
 }
 
-const buildHexo = opts => run('hexo g', opts)
+const buildHexo = () => hexo('generate')
 
 const buildProdTheme = () =>
   run(`npm run -s build`, {
@@ -70,9 +71,9 @@ const listen = () => {
 const serve = () => watch().then(listen)
 
 const generate = async () => {
-  await run('hexo clean')
+  await hexo('clean')
   await buildProdTheme()
-  await run('hexo g')
+  await buildHexo()
 }
 
 const deploy = () => run('firebase deploy')

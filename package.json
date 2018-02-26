@@ -15,9 +15,11 @@
     "hexo-generator-index": "^0.2.0",
     "hexo-generator-sitemap": "^1.1.2",
     "hexo-generator-tag": "^0.2.0",
+    "hexo-prism-plugin": "^2.2.0",
     "hexo-render-pug": "^1.1.0",
     "hexo-renderer-marked": "^0.3.0",
-    "live-server": "^1.2.0"
+    "live-server": "^1.2.0",
+    "prismjs": "^1.11.0"
   },
   "description": "blog.dgeibi.xyz",
   "repository": {
